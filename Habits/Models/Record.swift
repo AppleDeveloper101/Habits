@@ -11,8 +11,10 @@ import SwiftData
 @Model
 class Record {
     private(set) var date: Date
+    private(set) var habit: Habit
     
-    init(date: Date) {
+    init(date: Date, habit: Habit) {
         self.date = date
+        self.habit = habit
     }
 }
