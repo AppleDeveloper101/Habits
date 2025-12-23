@@ -15,13 +15,17 @@ struct CardMonthHeader: View {
     }
     
     var body: some View {
-        Text(monthName)
-            .foregroundStyle(.labelVibrantPrimary)
-            .font(.footnote.bold())
-            .frame(height: 18)
+        HStack {
+            Text(monthName)
+                .foregroundStyle(.labelVibrantPrimary)
+                .font(.footnote.bold())
+                .frame(height: 18)
+            Spacer()
+        }
     }
 }
 
 #Preview {
     CardMonthHeader(date: .now)
+        .padding(.horizontal)
 }
