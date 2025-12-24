@@ -41,7 +41,7 @@ struct CardStreakButton: View {
     }
     
     private var hasTodayRecord: Bool {
-        return records.first?.date == startOfToday
+        return records.contains { $0.date == startOfToday }
     }
     
     private var fontColor: Color {
