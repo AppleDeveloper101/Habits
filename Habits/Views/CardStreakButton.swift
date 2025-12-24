@@ -87,7 +87,7 @@ struct CardStreakButton: View {
         .onTapGesture {
             if hasTodayRecord {
                 do {
-                    if let recordToDelete = records.first {
+                    if let recordToDelete = records.first(where: { $0.date == startOfToday }) {
                         context.delete(recordToDelete)
                     } else {
                         fatalError("Failed to get recordToDelete in CardStreakButton")
