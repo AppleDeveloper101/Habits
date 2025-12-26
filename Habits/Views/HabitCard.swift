@@ -31,7 +31,14 @@ struct HabitCard: View {
             .scrollDisabled(true)
         }
         .padding([.leading, .top, .bottom], outerPadding)
+        
+        // Use of paddings addressed to fix visual bug caused by
+        // non-obvious misalignment between clipShape and strokeBorder,
+        // which causes text to bleed through clipping shape on pixel-precision level
+        .padding(.trailing, -0.5)
         .clipShape(cardShape)
+        .padding(.trailing, 0.5)
+        
         .background {
             cardShape
                 .fill(.background)
@@ -39,7 +46,7 @@ struct HabitCard: View {
         }
         .overlay {
             cardShape
-                .stroke(lineWidth: 1)
+                .strokeBorder(lineWidth: 1)
                 .foregroundStyle(Color(hue: 0, saturation: 0, brightness: 0.84))
         }
     }
