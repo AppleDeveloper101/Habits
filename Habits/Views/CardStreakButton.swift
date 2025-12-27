@@ -27,7 +27,9 @@ struct CardStreakButton: View {
         
         var index = -1
         while true {
-            let dateToCompare = calendar.date(byAdding: .day, value: index, to: startOfToday)!
+            guard let dateToCompare = calendar.date(byAdding: .day, value: index, to: startOfToday) else {
+                fatalError("Failed to retrieve dateToCompare in CardStreakButton")
+            }
             
             if records.contains(where: { $0.date == dateToCompare }) {
                 count += 1
@@ -78,23 +80,18 @@ struct CardStreakButton: View {
         }
         .onTapGesture {
             if hasTodayRecord {
-                do {
-                    if let recordToDelete = records.first(where: { $0.date == startOfToday }) {
-                        context.delete(recordToDelete)
-                    } else {
-                        fatalError("Failed to get recordToDelete in CardStreakButton")
-                    }
-                    try context.save()
-                } catch {
-                    fatalError("Failed to save persistent storage after deleting record: \(error)")
+                guard let recordToDelete = records.first(where: { $0.date == startOfToday }) else {
+                    fatalError("Failed to get recordToDelete in CardStreakButton")
                 }
+                context.delete(recordToDelete)
             } else {
-                do {
-                    let recordToInsert = Record(date: startOfToday, habit: habit)
-                    context.insert(recordToInsert)
-                    try context.save()
-                } catch {
-                    fatalError("Failed to save persistent storage after inserting record: \(error)")
+                let recordToInsert = Record(date: startOfToday, habit: habit)
+                context.insert(recordToInsert)
+            }
+            
+            if context.hasChanges {
+                do { try context.save() } catch {
+                    fatalError("Failed to save persistent storage: \(error)")
                 }
             }
         }
