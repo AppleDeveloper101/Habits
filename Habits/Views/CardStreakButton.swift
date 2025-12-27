@@ -8,8 +8,6 @@
 import SwiftUI
 import SwiftData
 
-// MARK: - Review
-
 struct CardStreakButton: View {
     @Environment(\.modelContext) private var context
     
@@ -48,12 +46,8 @@ struct CardStreakButton: View {
         hasTodayRecord ? .white : .labelVibrantPrimary
     }
     
-    private var horizontalPadding: CGFloat {
+    private var outerPadding: CGFloat {
         hasTodayRecord ? 8 : 0
-    }
-    
-    private var verticalPadding: CGFloat {
-        hasTodayRecord ? 6 : 0
     }
     
     private let imageToCountSpacing: CGFloat = 2
@@ -68,22 +62,20 @@ struct CardStreakButton: View {
     }
     
     var body: some View {
-        ZStack {
+        HStack(spacing: imageToCountSpacing) {
+            Image(systemName: "bolt.fill")
+            Text(streak.description)
+        }
+        .font(.headline)
+        .foregroundStyle(fontColor)
+        .frame(height: 22)
+        .padding(outerPadding)
+        .background {
             if hasTodayRecord {
                 RoundedRectangle(cornerRadius: 12)
                     .fill(.labelVibrantPrimary)
             }
-            HStack(spacing: imageToCountSpacing) {
-                Image(systemName: "bolt.fill")
-                Text(streak.description)
-            }
-            .font(.headline)
-            .foregroundStyle(fontColor)
-            .frame(height: 22)
-            .padding(.horizontal, horizontalPadding)
-            .padding(.vertical, verticalPadding)
         }
-        .fixedSize()
         .onTapGesture {
             if hasTodayRecord {
                 do {
