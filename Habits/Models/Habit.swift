@@ -12,6 +12,7 @@ import SwiftData
 class Habit {
     var title: String
     var emoji: String
+    private(set) var created: Date
     
     @Relationship(deleteRule: .cascade, inverse: \Record.habit)
     var records: [Record]?
@@ -19,6 +20,7 @@ class Habit {
     init(title: String, emoji: String) {
         self.title = title
         self.emoji = emoji
+        self.created = .now
         self.records = nil
     }
 }
