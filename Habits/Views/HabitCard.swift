@@ -49,6 +49,7 @@ struct HabitCard: View {
                 .strokeBorder(lineWidth: 1)
                 .foregroundStyle(Color(hue: 0, saturation: 0, brightness: 0.84))
         }
+        .contentShape(.contextMenuPreview, cardShape)
     }
 }
 
