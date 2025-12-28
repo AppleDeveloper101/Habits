@@ -17,6 +17,7 @@ struct Homepage: View {
             VStack(spacing: 16) {
                 ForEach(habits) { habit in
                     HabitCard(habit: habit)
+                        .habitCardContextMenu(habit: habit)
                 }
             }
         }
