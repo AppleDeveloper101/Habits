@@ -14,7 +14,7 @@ struct Homepage: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            LazyVStack(spacing: 16) {
                 ForEach(habits) { habit in
                     HabitCard(habit: habit)
                         .habitCardContextMenu(habit: habit)
