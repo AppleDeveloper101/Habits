@@ -19,6 +19,7 @@ extension View {
                     .fixedSize()
             }
         }
+        .zIndex(100)
     }
 }
 
