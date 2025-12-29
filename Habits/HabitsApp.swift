@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct HabitsApp: App {
     var body: some Scene {
         WindowGroup {
-            
+            NavigationStack {
+                Homepage()
+            }
         }
+        .modelContainer(for: [Habit.self, Record.self])
     }
 }
