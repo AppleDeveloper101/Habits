@@ -28,3 +28,9 @@ extension View {
         modifier(HabitCardContextMenu(habit: habit))
     }
 }
+
+extension View {
+    func backgroundWithStroke<S: InsettableShape>(shape: S) -> some View {
+        modifier(BackgroundWithStroke(shape: shape))
+    }
+}
