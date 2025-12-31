@@ -69,10 +69,10 @@ import SwiftData
 
 #Preview(traits: .sizeThatFitsLayout) {
     VStack(spacing: 16) {
-        HabitCard(habit: SampleData.shared.sampleHabit)
-        HabitCard(habit: SampleData.shared.sampleHabit)
+        HabitCard(habit: sampleHabit)
+        HabitCard(habit: sampleHabit)
     }
     .padding()
-    .modelContainer(SampleData.shared.container)
+    .modelContainer(sampleContainer)
 }
 #endif

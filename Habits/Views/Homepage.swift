@@ -33,5 +33,5 @@ struct Homepage: View {
     NavigationStack {
         Homepage()
     }
-    .modelContainer(SampleData.shared.container)
+    .modelContainer(sampleContainer)
 }

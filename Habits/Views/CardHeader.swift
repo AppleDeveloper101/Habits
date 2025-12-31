@@ -37,8 +37,8 @@ struct CardHeader: View {
 import SwiftData
 
 #Preview {
-    CardHeader(habit: SampleData.shared.sampleHabit)
-        .modelContainer(SampleData.shared.container)
+    CardHeader(habit: sampleHabit)
+        .modelContainer(sampleContainer)
         .padding(.horizontal)
 }
 #endif

@@ -100,8 +100,8 @@ struct CardStreakButton: View {
 
 #Preview {
     VStackLayout(spacing: 16) {
-        CardHabitCalendar(displayedMonths: [.now], habit: SampleData.shared.sampleHabit)
-        CardStreakButton(habit: SampleData.shared.sampleHabit)
+        CardHabitCalendar(displayedMonths: [.now], habit: sampleHabit)
+        CardStreakButton(habit: sampleHabit)
     }
-    .modelContainer(SampleData.shared.container)
+    .modelContainer(sampleContainer)
 }
