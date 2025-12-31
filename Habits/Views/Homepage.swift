@@ -12,6 +12,8 @@ struct Homepage: View {
     @Query(sort: \Habit.created)
     private var habits: [Habit]
     
+    @State private var isNewHabitSheetPresented = false
+    
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 16) {
@@ -26,6 +28,15 @@ struct Homepage: View {
         .scrollIndicators(.hidden)
         .toolbarTitleDisplayMode(.inlineLarge)
         .padding([.top, .leading, .trailing])
+        .toolbar {
+            Button("Add Habit", systemImage: "plus") {
+                isNewHabitSheetPresented = true
+            }
+            .tint(Color.labelVibrantPrimary)
+        }
+        .sheet(isPresented: $isNewHabitSheetPresented) {
+            
+        }
     }
 }
 
