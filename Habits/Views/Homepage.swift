@@ -35,7 +35,9 @@ struct Homepage: View {
             .tint(Color.labelVibrantPrimary)
         }
         .sheet(isPresented: $isNewHabitSheetPresented) {
-            
+            NavigationStack {
+                NewHabitSheet()
+            }
         }
     }
 }
