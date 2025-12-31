@@ -18,4 +18,9 @@ struct HabitsApp: App {
         }
         .modelContainer(for: [Habit.self, Record.self])
     }
+    
+    init() {
+        UINavigationBar.appearance().largeTitleTextAttributes = [.foregroundColor: UIColor.labelVibrantPrimary]
+        UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.labelVibrantPrimary]
+    }
 }
