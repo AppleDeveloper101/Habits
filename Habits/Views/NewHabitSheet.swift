@@ -41,7 +41,7 @@ struct NewHabitSheet: View {
                     .fixedSize()
                     .frame(width: controlHeight / 2, height: controlHeight / 2)
                     .frame(width: controlHeight, height: controlHeight)
-                    .backgroundWithStroke(shape: Circle())
+                    .backgroundWithStrokeOverlay(shape: Circle())
                     .onTapGesture { currentFocus = "emoji" }
                     .overlay {
                         if emoji.isEmpty && currentFocus != "emoji" {
@@ -56,7 +56,7 @@ struct NewHabitSheet: View {
                     .foregroundStyle(.labelVibrantPrimary)
                     .padding(.horizontal, 12)
                     .frame(height: controlHeight)
-                    .backgroundWithStroke(shape: Capsule())
+                    .backgroundWithStrokeOverlay(shape: Capsule())
             }
             .padding()
         }
