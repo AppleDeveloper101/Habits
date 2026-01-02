@@ -1,5 +1,5 @@
 //
-//  BackgroundWithStroke.swift
+//  BackgroundWithStrokeOverlay.swift
 //  Habits
 //
 //  Created by Andrey on 29/12/2025.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct BackgroundWithStroke<S: InsettableShape>: ViewModifier {
-    private var shape: S
+struct BackgroundWithStrokeOverlay<S: InsettableShape>: ViewModifier {
+    private let shape: S
     
     init(shape: S) {
         self.shape = shape

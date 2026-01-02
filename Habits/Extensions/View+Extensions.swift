@@ -30,7 +30,7 @@ extension View {
 }
 
 extension View {
-    func backgroundWithStroke<S: InsettableShape>(shape: S) -> some View {
-        modifier(BackgroundWithStroke(shape: shape))
+    func backgroundWithStrokeOverlay<S: InsettableShape>(shape: S) -> some View {
+        modifier(BackgroundWithStrokeOverlay(shape: shape))
     }
 }
