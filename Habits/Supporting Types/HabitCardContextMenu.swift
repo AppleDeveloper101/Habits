@@ -26,3 +26,9 @@ struct HabitCardContextMenu: ViewModifier {
             }
     }
 }
+
+extension View {
+    func habitCardContextMenu(habit: Habit) -> some View {
+        modifier(HabitCardContextMenu(habit: habit))
+    }
+}
