@@ -28,3 +28,9 @@ struct BackgroundWithStrokeOverlay<S: InsettableShape>: ViewModifier {
             }
     }
 }
+
+extension View {
+    func backgroundWithStrokeOverlay<S: InsettableShape>(shape: S) -> some View {
+        modifier(BackgroundWithStrokeOverlay(shape: shape))
+    }
+}
