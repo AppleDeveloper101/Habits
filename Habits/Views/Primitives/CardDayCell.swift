@@ -42,11 +42,8 @@ struct CardDayCell: View {
     }
 }
 
-#Preview(traits: .sizeThatFitsLayout) {
-    VStack(spacing: 16) {
-        CardDayCell(hasRecord: false, isToday: false)
-        CardDayCell(hasRecord: false, isToday: true)
-        CardDayCell(hasRecord: true, isToday: true)
-    }
-    .padding()
+#Preview {
+    CardDayCell(hasRecord: false, isToday: false)
+    CardDayCell(hasRecord: false, isToday: true)
+    CardDayCell(hasRecord: true, isToday: true)
 }

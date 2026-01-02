@@ -39,6 +39,6 @@ import SwiftData
 #Preview {
     CardHeader(habit: sampleHabit)
         .modelContainer(sampleContainer)
-        .padding(.horizontal)
+        .padding()
 }
 #endif

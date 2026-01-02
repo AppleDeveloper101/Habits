@@ -67,12 +67,9 @@ private func monthsToDisplay() -> [Date] {
 
 import SwiftData
 
-#Preview(traits: .sizeThatFitsLayout) {
-    VStack(spacing: 16) {
-        HabitCard(habit: sampleHabit)
-        HabitCard(habit: sampleHabit)
-    }
-    .padding()
-    .modelContainer(sampleContainer)
+#Preview {
+    HabitCard(habit: sampleHabit)
+        .modelContainer(sampleContainer)
+        .padding()
 }
 #endif

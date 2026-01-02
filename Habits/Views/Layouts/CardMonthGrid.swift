@@ -76,12 +76,6 @@ struct CardMonthGrid: View {
 }
 
 #Preview {
-    let calendar = Calendar.current
-    
-    HStack(spacing: 8) {
-        CardMonthGrid(date: calendar.date(byAdding: .month, value: 0, to: .now)!, habit: sampleHabit)
-        CardMonthGrid(date: calendar.date(byAdding: .month, value: 1, to: .now)!, habit: sampleHabit)
-        CardMonthGrid(date: calendar.date(byAdding: .month, value: 2, to: .now)!, habit: sampleHabit)
-    }
-    .modelContainer(sampleContainer)
+    CardMonthGrid(date: .now, habit: sampleHabit)
+        .modelContainer(sampleContainer)
 }

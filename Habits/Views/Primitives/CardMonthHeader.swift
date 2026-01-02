@@ -27,5 +27,5 @@ struct CardMonthHeader: View {
 
 #Preview {
     CardMonthHeader(date: .now)
-        .padding(.horizontal)
+        .padding()
 }
