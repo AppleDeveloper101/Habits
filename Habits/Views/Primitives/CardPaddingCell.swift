@@ -9,11 +9,6 @@ import SwiftUI
 
 struct CardPaddingCell: View {
     var body: some View {
-        Color.clear
-            .frame(width: 16, height: 16)
+        Color.clear.frame(width: 16, height: 16)
     }
-}
-
-#Preview {
-    CardPaddingCell()
 }
