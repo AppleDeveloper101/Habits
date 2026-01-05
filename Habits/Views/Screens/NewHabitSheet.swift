@@ -12,58 +12,27 @@ struct NewHabitSheet: View {
     @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     
-    @FocusState private var currentFocus: String?
-    
-    @State private var title: String = ""
     @State private var emoji: String = ""
+    @State private var title: String = ""
     
     private var formattedTitle: String {
         title.trimmingCharacters(in: .whitespacesAndNewlines)
     }
     
-    private let emojiPromptText = Text("")
-    private let titlePromptText = {
-        Text("Title...")
-            .font(.headline)
-            .foregroundStyle(.fillVibrantSecondary)
-    }()
-    
     private let emojiToTextFieldSpacing: CGFloat = 8
-    private let controlHeight: CGFloat = 44
     
     var body: some View {
         VStack {
             HStack(spacing: emojiToTextFieldSpacing) {
-                TextField("Emoji", text: $emoji, prompt: emojiPromptText)
-                    .focused($currentFocus, equals: "emoji")
-                    .keyboardType(UIKeyboardType(rawValue: 124)!)
-                    .font(.title2)
-                    .fixedSize()
-                    .frame(width: controlHeight / 2, height: controlHeight / 2)
-                    .frame(width: controlHeight, height: controlHeight)
-                    .backgroundWithStrokeOverlay(shape: Circle())
-                    .onTapGesture { currentFocus = "emoji" }
-                    .overlay {
-                        if emoji.isEmpty && currentFocus != "emoji" {
-                            Image(systemName: "plus")
-                                .font(.title2)
-                                .foregroundStyle(.fillVibrantSecondary)
-                        }
-                    }
-                TextField("Title", text: $title, prompt: titlePromptText)
-                    .focused($currentFocus, equals: "title")
-                    .font(.headline)
-                    .foregroundStyle(.labelVibrantPrimary)
-                    .padding(.horizontal, 12)
-                    .frame(height: controlHeight)
-                    .backgroundWithStrokeOverlay(shape: Capsule())
+                EmojiPicker($emoji)
+                TitleTextField($title)
             }
             .padding()
         }
         .navigationTitle("New Habit")
         .toolbarTitleDisplayMode(.inline)
+        .presentationDetents([.fraction(0.19)])
         .frame(maxHeight: .infinity, alignment: .top)
-        .presentationDetents([.height(146)])
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel", systemImage: "xmark", role: .cancel) {
