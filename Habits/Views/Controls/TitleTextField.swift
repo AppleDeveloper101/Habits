@@ -26,6 +26,7 @@ struct TitleTextField: View {
         TextField("Title", text: $text, prompt: prompt)
             .focused($isFocused)
             .font(.headline)
+            .tint(.labelVibrantPrimary)
             .foregroundStyle(.labelVibrantPrimary)
             .padding(.horizontal, 12)
             .frame(height: 44)

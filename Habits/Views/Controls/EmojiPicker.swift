@@ -22,6 +22,7 @@ struct EmojiPicker: View {
                 TextField("", text: $emoji)
                     .focused($isFocused)
                     .keyboardType(UIKeyboardType(rawValue: 124)!)
+                    .tint(.labelVibrantPrimary)
                     .multilineTextAlignment(.center)
                     .containerRelativeFrame(.horizontal)
                     .onChange(of: emoji) { oldValue, newValue in
