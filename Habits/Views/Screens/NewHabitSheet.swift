@@ -53,14 +53,9 @@ struct NewHabitSheet: View {
     }
 }
 
-// TODO: Update #Preview
-
 #Preview {
-    @Previewable @State var isPresented = true
-    
-    Toggle("Sheet", isOn: $isPresented)
-        .padding(.horizontal, 32)
-        .sheet(isPresented: $isPresented) {
+    Color.clear
+        .sheet(isPresented: .constant(true)) {
             NavigationStack {
                 NewHabitSheet()
             }
