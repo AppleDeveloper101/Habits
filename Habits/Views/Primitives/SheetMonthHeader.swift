@@ -26,6 +26,9 @@ struct SheetMonthHeader: View {
     }
     
     private let monthToYearSpacing: CGFloat = 8
+    private let height: CGFloat = 34
+    
+    static let height: CGFloat = 34
     
     init(date: Date) {
         self.date = date
@@ -45,7 +48,7 @@ struct SheetMonthHeader: View {
             
             Spacer()
         }
-        .frame(height: 34)
+        .frame(height: height)
     }
 }
 
