@@ -52,6 +52,13 @@ struct SheetMonthGrid: View {
     init(date: Date, habit: Habit) {
         self.date = date
         self.habit = habit
+        
+        let fetchedRecordsHabitID = habit.persistentModelID
+        let predicate = #Predicate<Record> {
+            $0.habit?.persistentModelID == fetchedRecordsHabitID
+        }
+        
+        self._records = Query(filter: predicate)
     }
     
     var body: some View {
