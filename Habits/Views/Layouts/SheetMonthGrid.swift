@@ -36,7 +36,7 @@ struct SheetMonthGrid: View {
         }
     }
     
-    private let headerToGridSpacing: CGFloat = 16
+    private let headerToGridSpacing: CGFloat = 8
     private let gridSpacing: CGFloat = 8
     
     private var gridItems: [GridItem] {
