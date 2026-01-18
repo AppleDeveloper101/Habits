@@ -54,8 +54,13 @@ struct NewHabitSheet: View {
 }
 
 #Preview {
-    Color.clear
-        .sheet(isPresented: .constant(true)) {
+    @Previewable @State var isPresented = true
+    
+    Color(.systemBackground)
+        .onTapGesture {
+            isPresented = true
+        }
+        .sheet(isPresented: $isPresented) {
             NavigationStack {
                 NewHabitSheet()
             }
