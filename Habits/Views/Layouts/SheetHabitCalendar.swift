@@ -58,15 +58,12 @@ private extension View {
     func columnMask() -> some View {
         self
             .mask {
-                Rectangle()
-                    .frame(height: SheetMonthHeader.height)
-                    .containerRelativeFrame(.horizontal) { size, _ in
-                        size * 2 // Ensure month headers visible across full screen width
-                    }
-                HStack(spacing: .zero) {
+                VStack(spacing: 0) {
                     Rectangle()
-                        .frame(width: .zero)
-                        .opacity(.zero)
+                        .frame(height: SheetMonthHeader.height)
+                        .containerRelativeFrame(.horizontal) { size, _ in
+                            size * 2 // Ensure month headers visible across full screen width
+                        }
                     Rectangle()
                 }
             }
@@ -79,12 +76,9 @@ private extension View {
 import SwiftData
 
 #Preview {
-    let calendar = Calendar.current
-    let months = {
-        (-1...1).map { offset in
-            calendar.date(byAdding: .month, value: offset, to: .now) ?? .now
-        }
-    }()
+    let months = (-1...1).map { offset in
+        Calendar.current.date(byAdding: .month, value: offset, to: .now) ?? .now
+    }
     
     SheetHabitCalendar(monthsToDisplay: months, habit: sampleHabit)
         .padding(.leading)
