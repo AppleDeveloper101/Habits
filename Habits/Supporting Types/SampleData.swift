@@ -35,6 +35,8 @@ let sampleContainer: ModelContainer = {
         context.insert(sampleHabit)
         records.forEach { context.insert($0) }
         
+        try context.save()
+        
         return container
     } catch {
         fatalError("Error occurred during SampleData initialization: \(error)")
