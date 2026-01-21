@@ -9,10 +9,17 @@ import SwiftUI
 import SwiftData
 
 struct CardMonthGrid: View {
-    @Query private var records: [Record]
+    
+    // MARK: - Properties
     
     private let date: Date
-    private let calendar: Calendar
+    private let habit: Habit
+    
+    @Query private var records: [Record]
+    
+    @State private var isSheetPresented = false
+    
+    private let calendar = Calendar.current
     
     private var startOfMonth: Date {
         guard let date = calendar.dateInterval(of: .month, for: date)?.start else {
@@ -46,16 +53,27 @@ struct CardMonthGrid: View {
         Array(repeating: GridItem(spacing: gridSpacing), count: 7)
     }
     
+    // MARK: - Initializers
+    
     init(date: Date, habit: Habit) {
         self.date = date
-        self.calendar = Calendar.current
+        self.habit = habit
         
-        let habitIDToFetch = habit.persistentModelID
-        let predicate = #Predicate<Record> { $0.habit?.persistentModelID == habitIDToFetch }
+        let habitID = habit.persistentModelID
+        let predicate = #Predicate<Record> { $0.habit?.persistentModelID == habitID }
         _records = Query(filter: predicate)
     }
     
+    // MARK: - Body
+    
     var body: some View {
+        monthGrid()
+            .presentsSheet(presentationState: $isSheetPresented, content: sheetContent)
+    }
+    
+    // MARK: - Subviews
+    
+    private func monthGrid() -> some View {
         VStack(spacing: headerToGridSpacing) {
             CardMonthHeader(date: startOfMonth)
             
@@ -73,7 +91,27 @@ struct CardMonthGrid: View {
         }
         .fixedSize()
     }
+    
+    private var sheetContent: some View {
+        CalendarSheet(monthToDisplay: startOfMonth, habit: habit)
+    }
 }
+
+// MARK: - Modifiers
+
+private extension View {
+    func presentsSheet(presentationState: Binding<Bool>, content: some View) -> some View {
+        self
+            .onTapGesture {
+                presentationState.wrappedValue = true
+            }
+            .sheet(isPresented: presentationState) {
+                content
+            }
+    }
+}
+
+// MARK: - Previews
 
 #Preview {
     CardMonthGrid(date: .now, habit: sampleHabit)
