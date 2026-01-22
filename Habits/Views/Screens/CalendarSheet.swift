@@ -39,7 +39,7 @@ struct CalendarSheet: View {
         VStack(spacing: headerToCalendarSpacing) {
             SheetHeader(habit: habit)
                 .padding([.leading, .top, .trailing])
-            SheetHabitCalendar(monthsToDisplay: [monthToDisplay], habit: habit)
+            SheetHabitCalendar(monthToDisplay: monthToDisplay, habit: habit)
                 .padding([.leading, .bottom])
         }
     }
