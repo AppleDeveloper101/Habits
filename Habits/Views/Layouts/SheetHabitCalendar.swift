@@ -5,44 +5,45 @@
 //  Created by Andrey on 08/01/2026.
 //
 
-// TODO: Programmatic scrolling – focused month selection
-
 import SwiftUI
 
 struct SheetHabitCalendar: View {
     
-    // MARK: Properties
+    // MARK: - Properties
     
-    private let monthsToDisplay: [Date]
+    private let monthToDisplay: Date
     private let habit: Habit
     
     private let columnToGridSpacing: CGFloat = 8
     private let gridToGridSpacing: CGFloat = 16
     
-    // MARK: Initializer
+    // MARK: - Initializer
     
-    init(monthsToDisplay: [Date], habit: Habit) {
-        self.monthsToDisplay = monthsToDisplay
+    init(monthToDisplay: Date, habit: Habit) {
+        self.monthToDisplay = monthToDisplay
         self.habit = habit
     }
     
-    // MARK: Body
+    // MARK: - Body
     
     var body: some View {
+        calendar()
+    }
+    
+    // MARK: - Subviews
+    
+    private func calendar() -> some View {
         HStack(alignment: .bottom, spacing: .zero) {
             SheetWeekdaysColumn()
             MonthGrids()
         }
     }
     
-    // MARK: Subviews
-    
     private func MonthGrids() -> some View {
         ScrollView(.horizontal) {
             HStack(spacing: gridToGridSpacing) {
-                ForEach(monthsToDisplay, id: \.self) { month in
-                    SheetMonthGrid(date: month, habit: habit)
-                }
+                // TODO: Infinite scroll
+                SheetMonthGrid(date: monthToDisplay, habit: habit)
             }
             .padding(.leading, columnToGridSpacing)
         }
@@ -52,7 +53,7 @@ struct SheetHabitCalendar: View {
     }
 }
 
-// MARK: Modifiers
+// MARK: - Modifiers
 
 private extension View {
     func columnMask() -> some View {
@@ -70,17 +71,13 @@ private extension View {
     }
 }
 
-// TODO: Rewrite
+// MARK: - Previews
 
 #if DEBUG
 import SwiftData
 
 #Preview {
-    let months = (-1...1).map { offset in
-        Calendar.current.date(byAdding: .month, value: offset, to: .now) ?? .now
-    }
-    
-    SheetHabitCalendar(monthsToDisplay: months, habit: sampleHabit)
+    SheetHabitCalendar(monthToDisplay: .now, habit: sampleHabit)
         .padding(.leading)
         .modelContainer(sampleContainer)
 }
