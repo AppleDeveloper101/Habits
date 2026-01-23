@@ -14,6 +14,20 @@ struct SheetHabitCalendar: View {
     private let monthToDisplay: Date
     private let habit: Habit
     
+    @State private var focusedMonth: Date?
+    @State private var months: [Date] = []
+    
+    private var startOfMonthToDisplay: Date {
+        let calendar = Calendar.current
+        
+        guard let startOfMonth = calendar.dateInterval(of: .month, for: monthToDisplay)?.start else {
+            assertionFailure("Failed to obtain startOfMonthToDisplay in SheetHabitCalendar")
+            return .now
+        }
+        
+        return startOfMonth
+    }
+    
     private let columnToGridSpacing: CGFloat = 8
     private let gridToGridSpacing: CGFloat = 16
     
@@ -42,14 +56,37 @@ struct SheetHabitCalendar: View {
     private func MonthGrids() -> some View {
         ScrollView(.horizontal) {
             HStack(spacing: gridToGridSpacing) {
-                // TODO: Infinite scroll
-                SheetMonthGrid(date: monthToDisplay, habit: habit)
+                ForEach(months, id: \.self) { month in
+                    SheetMonthGrid(date: month, habit: habit)
+                        .id(month)
+                }
             }
-            .padding(.leading, columnToGridSpacing)
+            .padding(.horizontal, columnToGridSpacing)
         }
+        .scrollTargetLayout()
+        .defaultScrollAnchor(.trailing)
+        .scrollPosition(id: $focusedMonth)
         .scrollIndicators(.hidden)
         .scrollClipDisabled()
         .columnMask()
+        .onAppear {
+            loadInitialMonths()
+            focusedMonth = startOfMonthToDisplay
+        }
+    }
+    
+    // MARK: - Helpers
+    
+    private func loadInitialMonths() {
+        guard months.isEmpty else { return }
+        
+        let calendar = Calendar.current
+        
+        for offset in -1...1 {
+            if let month = calendar.date(byAdding: .month, value: offset, to: startOfMonthToDisplay) {
+                months.append(month)
+            }
+        }
     }
 }
 
