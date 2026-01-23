@@ -90,6 +90,7 @@ struct CardMonthGrid: View {
             }
         }
         .fixedSize()
+        .contentShape(.rect)
     }
     
     private var sheetContent: some View {
