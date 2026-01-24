@@ -25,11 +25,22 @@ struct SheetDayCell: View {
         calendar.isDate(date, equalTo: .now, toGranularity: .day)
     }
     
+    private var isFutureDay: Bool {
+        guard let startOfNextDay = calendar.dateInterval(of: .day, for: .now)?.end else {
+            fatalError("Failed to obtain startOfNextDay inside SheetDayCell")
+        }
+        
+        return date >= startOfNextDay
+    }
+    
     private let cellSize: CGFloat = 44
     private let cellShape = RoundedRectangle(cornerRadius: 14)
     
     private var fontColor: Color {
-        record == nil ? .labelVibrantPrimary : .white
+        let color: Color = record == nil ? .labelVibrantPrimary : .white
+        let opacity: Double = isFutureDay ? 0.33 : 1.00
+        
+        return color.opacity(opacity)
     }
     
     init(record: Record?, date: Date, habit: Habit) {
@@ -79,6 +90,7 @@ struct SheetDayCell: View {
                     fatalError("Failed to save context from sheet day cell: \(error)")
                 }
             }
+            .disabled(isFutureDay)
     }
 }
 
