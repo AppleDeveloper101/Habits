@@ -48,10 +48,7 @@ struct CardStreakButton: View {
         hasTodayRecord ? .white : .labelVibrantPrimary
     }
     
-    private var outerPadding: CGFloat {
-        hasTodayRecord ? 8 : 0
-    }
-    
+    private let outerPadding: CGFloat = 8
     private let imageToCountSpacing: CGFloat = 2
     
     init(habit: Habit) {
