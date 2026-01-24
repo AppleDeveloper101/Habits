@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct CardDayCell: View {
+    static var placeholder: some View {
+        Color.clear.frame(width: 16, height: 16)
+    }
+    
     private let hasRecord: Bool
     private let isToday: Bool
     

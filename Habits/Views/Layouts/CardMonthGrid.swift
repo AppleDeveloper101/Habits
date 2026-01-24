@@ -79,7 +79,7 @@ struct CardMonthGrid: View {
             
             LazyHGrid(rows: gridItems, spacing: gridSpacing) {
                 ForEach(0..<paddingCellsCount, id: \.self) { _ in
-                    CardPaddingCell()
+                    CardDayCell.placeholder
                 }
                 ForEach(monthDays, id: \.self) { cellDate in
                     CardDayCell(

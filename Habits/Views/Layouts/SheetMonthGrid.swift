@@ -42,7 +42,7 @@ struct SheetMonthGrid: View {
     private var gridItems: [GridItem] {
         Array(repeating: GridItem(spacing: gridSpacing), count: 7)
     }
-
+    
     private var paddingCellsCount: Int {
         let startOfMonthWeekday = calendar.component(.weekday, from: startOfMonth)
         let systemFirstWeekday = calendar.firstWeekday
@@ -67,7 +67,7 @@ struct SheetMonthGrid: View {
             
             LazyHGrid(rows: gridItems, spacing: gridSpacing) {
                 ForEach(0..<paddingCellsCount, id: \.self) { _ in
-                    SheetPaddingCell()
+                    SheetDayCell.placeholder
                 }
                 ForEach(monthDays, id: \.self) { cellDate in
                     SheetDayCell(

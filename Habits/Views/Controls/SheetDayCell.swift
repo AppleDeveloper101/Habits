@@ -11,6 +11,10 @@ import SwiftData
 struct SheetDayCell: View {
     @Environment(\.modelContext) private var context
     
+    static var placeholder: some View {
+        Color.clear.frame(width: 44, height: 44)
+    }
+    
     private let record: Record?
     private let date: Date
     private let habit: Habit
