@@ -87,6 +87,7 @@ struct NewHabitSheet: View {
                 }
         }
         .buttonStyle(.plain)
+        .disabled(formattedTitle.isEmpty)
     }
 }
 
