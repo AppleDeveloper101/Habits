@@ -11,7 +11,7 @@ private struct DimensionsOverlay: ViewModifier {
     
     // MARK: - Properties
     
-    @State private var labelSize: CGSize = .zero
+    @State var labelSize: CGSize = .zero
     
     let alignment: Alignment
     let color: Color
@@ -19,8 +19,8 @@ private struct DimensionsOverlay: ViewModifier {
     let strokeBorderLineWidth: CGFloat
     let isStrokeBorderDisplayed: Bool
     
-    private let adjustmentPadding: CGFloat = 4
-    private let strokeBorderDashSize: CGFloat = 8
+    let adjustmentPadding: CGFloat = 4
+    let strokeBorderDashSize: CGFloat = 8
     
     // MARK: - Body
     
@@ -92,7 +92,7 @@ private extension CGFloat {
     var formattedValue: String {
         let value = NSNumber(value: self)
         
-        return Self.formatter.string(from: value) ?? "?"
+        return Self.formatter.string(from: value) ?? "Nil"
     }
 }
 
