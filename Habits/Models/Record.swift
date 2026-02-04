@@ -10,10 +10,18 @@ import SwiftData
 
 @Model
 class Record {
-    private(set) var date: Date
-    private(set) var habit: Habit?
     
-    init(date: Date, habit: Habit) {
+    // MARK: - Properties
+    
+    var date: Date
+    var habit: Habit
+    
+    // MARK: - Initializers
+    
+    init(
+        date: Date,
+        habit: Habit
+    ) {
         self.date = date
         self.habit = habit
     }
