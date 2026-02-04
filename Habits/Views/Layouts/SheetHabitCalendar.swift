@@ -114,7 +114,7 @@ private extension View {
 import SwiftData
 
 #Preview {
-    SheetHabitCalendar(monthToDisplay: .now, habit: sampleHabit)
+    SheetHabitCalendar(monthToDisplay: .now, habit: Habit.sample)
         .padding(.leading)
         .modelContainer(sampleContainer)
 }

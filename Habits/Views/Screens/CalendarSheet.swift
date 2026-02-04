@@ -84,7 +84,7 @@ import SwiftData
             isPresented = true
         }
         .sheet(isPresented: $isPresented) {
-            CalendarSheet(monthToDisplay: .now, habit: sampleHabit)
+            CalendarSheet(monthToDisplay: .now, habit: Habit.sample)
                 .modelContainer(sampleContainer)
         }
 }

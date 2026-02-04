@@ -83,6 +83,6 @@ struct SheetMonthGrid: View {
 }
 
 #Preview {
-    SheetMonthGrid(date: .now, habit: sampleHabit)
+    SheetMonthGrid(date: .now, habit: Habit.sample)
         .modelContainer(sampleContainer)
 }

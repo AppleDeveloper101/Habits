@@ -68,6 +68,6 @@ struct SheetHeader: View {
 }
 
 #Preview {
-    SheetHeader(habit: sampleHabit)
+    SheetHeader(habit: Habit.sample)
         .padding()
 }

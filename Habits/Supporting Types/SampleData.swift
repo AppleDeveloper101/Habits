@@ -24,13 +24,13 @@ let sampleContainer: ModelContainer = {
         let dayOffsets = [-14, -7, -4, -3, -2, 0]
         let records = dayOffsets.map { offset in
             if let date = calendar.date(byAdding: .day, value: offset, to: startOfToday) {
-                return Record(date: date, habit: sampleHabit)
+                return Record(date: date, habit: Habit.sample)
             } else {
                 fatalError("Failed to get date from offset during SampleData initialization")
             }
         }
         
-        context.insert(sampleHabit)
+        context.insert(Habit.sample)
         records.forEach { context.insert($0) }
         
         try context.save()

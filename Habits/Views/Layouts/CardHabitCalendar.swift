@@ -53,7 +53,7 @@ import SwiftData
         }
     }
     
-    CardHabitCalendar(displayedMonths: displayedMonths, habit: sampleHabit)
+    CardHabitCalendar(displayedMonths: displayedMonths, habit: Habit.sample)
         .modelContainer(sampleContainer)
         .containerRelativeFrame(.horizontal, alignment: .leading)
         .padding(.leading)

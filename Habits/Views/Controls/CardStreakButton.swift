@@ -96,6 +96,6 @@ struct CardStreakButton: View {
 }
 
 #Preview {
-    CardStreakButton(habit: sampleHabit)
+    CardStreakButton(habit: Habit.sample)
         .modelContainer(sampleContainer)
 }

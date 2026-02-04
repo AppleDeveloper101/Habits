@@ -115,6 +115,6 @@ private extension View {
 // MARK: - Previews
 
 #Preview {
-    CardMonthGrid(date: .now, habit: sampleHabit)
+    CardMonthGrid(date: .now, habit: Habit.sample)
         .modelContainer(sampleContainer)
 }

@@ -101,26 +101,26 @@ struct SheetDayCell: View {
 #Preview {
     let today = Date.now
     let yesterday = Date.now.addingTimeInterval(-86400)
-    let record = Record(date: today, habit: sampleHabit)
+    let record = Record(date: today, habit: Habit.sample)
     
     SheetDayCell(
         record: nil,
         date: yesterday,
-        habit: sampleHabit
+        habit: Habit.sample
     )
     SheetDayCell(
         record: nil,
         date: today,
-        habit: sampleHabit
+        habit: Habit.sample
     )
     SheetDayCell(
         record: record,
         date: yesterday,
-        habit: sampleHabit
+        habit: Habit.sample
     )
     SheetDayCell(
         record: record,
         date: today,
-        habit: sampleHabit
+        habit: Habit.sample
     )
 }

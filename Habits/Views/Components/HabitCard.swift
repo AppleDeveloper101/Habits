@@ -68,7 +68,7 @@ private func monthsToDisplay() -> [Date] {
 import SwiftData
 
 #Preview {
-    HabitCard(habit: sampleHabit)
+    HabitCard(habit: Habit.sample)
         .modelContainer(sampleContainer)
         .padding()
 }
