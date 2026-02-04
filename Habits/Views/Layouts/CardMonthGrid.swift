@@ -60,7 +60,7 @@ struct CardMonthGrid: View {
         self.habit = habit
         
         let habitID = habit.persistentModelID
-        let predicate = #Predicate<Record> { $0.habit?.persistentModelID == habitID }
+        let predicate = #Predicate<Record> { $0.habit.persistentModelID == habitID }
         _records = Query(filter: predicate)
     }
     
