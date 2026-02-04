@@ -8,8 +8,6 @@
 import Foundation
 import SwiftData
 
-let sampleHabit = Habit(title: "Sample Habit", emoji: "🌁")
-
 let sampleContainer: ModelContainer = {
     do {
         let schema = Schema([
