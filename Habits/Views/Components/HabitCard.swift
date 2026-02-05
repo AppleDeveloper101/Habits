@@ -33,6 +33,7 @@ struct HabitCard: View {
         .padding([.leading, .top, .bottom], outerPadding)
         .backgroundWithStroke(shape: cardShape)
         .contentShape(.contextMenuPreview, cardShape)
+        .habitCardContextMenu(habit: habit)
     }
 }
 

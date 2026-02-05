@@ -19,7 +19,6 @@ struct Homepage: View {
             LazyVStack(spacing: 16) {
                 ForEach(habits) { habit in
                     HabitCard(habit: habit)
-                        .habitCardContextMenu(habit: habit)
                 }
             }
         }
