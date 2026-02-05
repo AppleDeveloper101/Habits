@@ -39,7 +39,7 @@ struct HabitCard: View {
         .clipShape(cardShape)
         .padding(.trailing, 0.5)
         
-        .backgroundWithStrokeOverlay(shape: cardShape)
+        .backgroundWithStroke(shape: cardShape)
         .contentShape(.contextMenuPreview, cardShape)
     }
 }

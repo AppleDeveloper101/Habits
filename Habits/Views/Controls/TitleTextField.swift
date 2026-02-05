@@ -30,7 +30,7 @@ struct TitleTextField: View {
             .foregroundStyle(.labelVibrantPrimary)
             .padding(.horizontal, 12)
             .frame(height: 44)
-            .backgroundWithStrokeOverlay(shape: Capsule())
+            .backgroundWithStroke(shape: Capsule())
     }
 }
 
