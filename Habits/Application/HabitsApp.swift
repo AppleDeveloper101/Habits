@@ -8,6 +8,11 @@
 import SwiftUI
 
 @main struct HabitsApp: App {
+    
+    init() {
+        AppService.setupNavigationBarAppearance()
+    }
+    
     var body: some Scene {
         WindowGroup {
             // TODO: Homepage
