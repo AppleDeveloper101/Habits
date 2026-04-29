@@ -10,9 +10,13 @@ import SwiftData
 
 @Model class Record {
     
+    var habit: Habit
     var timestamp: Date
     
-    init() {
+    init(
+        habit: Habit
+    ) {
+        self.habit = habit
         self.timestamp = .now
     }
 }
