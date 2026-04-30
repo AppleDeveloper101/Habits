@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// TODO: Consolidate
+
 extension InsettableShape {
     func applyDefaultStyling() -> some View {
         self
@@ -21,6 +23,12 @@ extension InsettableShape {
                 )
             }
             .shadow(color: .shapeShadow, radius: 14, y: 4)
+    }
+}
+
+extension View {
+    func defaultStyleShape<S: InsettableShape>(_ shape: S) -> some View {
+        shape.applyDefaultStyling()
     }
 }
 
