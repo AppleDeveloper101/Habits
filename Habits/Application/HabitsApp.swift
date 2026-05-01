@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main struct HabitsApp: App {
     
@@ -17,5 +18,6 @@ import SwiftUI
         WindowGroup {
             Homepage()
         }
+        .modelContainer(DataManager.shared.container)
     }
 }
