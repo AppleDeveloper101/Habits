@@ -5,6 +5,7 @@
 //  Created by Andrey on 28/04/2026.
 //
 
+import Combine
 import SwiftUI
 
 extension View {
@@ -18,6 +19,22 @@ extension View {
             proxy.size.height
         } action: { height in
             property.wrappedValue = height
+        }
+    }
+    
+    func receiveKeyboardPresentationState(_ state: Binding<Bool>) -> some View {
+        let willShow = NotificationCenter.default
+            .publisher(for: UIResponder.keyboardWillShowNotification)
+            .map { _ in true }
+        
+        let willHide = NotificationCenter.default
+            .publisher(for: UIResponder.keyboardWillHideNotification)
+            .map { _ in false }
+        
+        let publisher = Publishers.Merge(willShow, willHide)
+        
+        return self.onReceive(publisher) { output in
+            state.wrappedValue = output
         }
     }
 }
