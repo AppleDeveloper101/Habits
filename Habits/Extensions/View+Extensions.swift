@@ -8,7 +8,16 @@
 import SwiftUI
 
 extension View {
+    
     func modify(@ViewBuilder _ transform: (_ view: Self) -> some View) -> some View {
         transform(self)
+    }
+    
+    func readHeight(into property: Binding<CGFloat>) -> some View {
+        self.onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.size.height
+        } action: { height in
+            property.wrappedValue = height
+        }
     }
 }
