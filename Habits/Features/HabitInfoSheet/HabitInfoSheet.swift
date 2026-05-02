@@ -37,9 +37,11 @@ struct HabitInfoSheet: View {
         self.title = habit?.title ?? ""
     }
     
+    // TODO: Suppress background dimming (also required for color matching with pre-iOS 26 builds)
     var body: some View {
         Color.clear.overlay(alignment: .top) {
             sheetContent()
+                .presentationBackground(.isLiquidGlassAvailable ? .sheetBackgroundGlass : .sheetBackground)
                 .receiveKeyboardPresentationState($isKeyboardPresented)
                 .presentationDetents([.height(contentHeight)])
                 .readHeight(into: $contentHeight)
@@ -87,6 +89,7 @@ struct HabitInfoSheet: View {
         } label: {
             Circle()
                 .frame(height: 44)
+                .tint(.habitInfoSheetCancelButton)
                 .overlay {
                     Image(systemName: "xmark")
                         .tint(.accent)
@@ -95,11 +98,9 @@ struct HabitInfoSheet: View {
                 .modify { view in
                     if #available(iOS 26.0, *) {
                         view
-                            .tint(.habitInfoSheetCancelButton)
                             .glassEffect(.regular.interactive())
                     } else {
                         view
-                            .tint(.black.opacity(0.1))
                     }
                 }
         }
@@ -117,19 +118,18 @@ struct HabitInfoSheet: View {
         } label: {
             Circle()
                 .frame(height: 44)
+                .tint(.accent)
                 .overlay {
                     Image(systemName: "checkmark")
-                        .tint(.complementary)
+                        .tint(.sheetBackground)
                         .font(.system(size: 22, weight: .medium))
                 }
                 .modify { view in
                     if #available(iOS 26.0, *) {
                         view
-                            .tint(.accent)
                             .glassEffect(.regular.interactive())
                     } else {
                         view
-                            .tint(.accent)
                     }
                 }
         }
