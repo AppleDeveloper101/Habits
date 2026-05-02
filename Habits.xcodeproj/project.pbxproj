@@ -249,6 +249,7 @@
 		55176D632F9F89D2005704D0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JW2466JJWG;
 				ENABLE_PREVIEWS = YES;
@@ -282,6 +283,7 @@
 		55176D642F9F89D2005704D0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = JW2466JJWG;
 				ENABLE_PREVIEWS = YES;
