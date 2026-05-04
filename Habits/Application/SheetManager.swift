@@ -16,23 +16,29 @@ import SwiftUI
     
     var currentSheet: Sheet? = nil
     
-    func setCurrentSheet(_ sheet: Sheet) {
+    func present(_ sheet: Sheet) {
         currentSheet = sheet
     }
     
     func dismiss() {
         currentSheet = nil
     }
-}
-
-enum Sheet: Identifiable {
-    case habitInfoSheet(_ habit: Habit? = nil)
     
-    var id: UUID { UUID() }
-    
-    var view: some View {
-        switch self {
-        case .habitInfoSheet(let habit): HabitInfoSheet(habit)
+    enum Sheet: Identifiable {
+        
+        case habitInfoSheet(_ habit: Habit? = nil)
+        
+        var id: String {
+            switch self {
+            case .habitInfoSheet(let habit):
+                return "HabitInfoSheet-\(habit?.id.uuidString ?? "NewHabit")"
+            }
+        }
+        
+        @ViewBuilder var view: some View {
+            switch self {
+            case .habitInfoSheet(let habit): HabitInfoSheet(habit)
+            }
         }
     }
 }
