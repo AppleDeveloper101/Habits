@@ -10,6 +10,8 @@ import SwiftData
 
 @Model class Habit {
     
+    @Attribute(.unique) var id: UUID
+    
     var emoji: String
     var title: String
     var timestamp: Date
@@ -20,6 +22,7 @@ import SwiftData
         emoji: String,
         title: String,
     ) {
+        self.id = UUID()
         self.emoji = emoji
         self.title = title
         self.timestamp = .now
