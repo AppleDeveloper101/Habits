@@ -22,11 +22,14 @@ struct Homepage: View {
             .background(Color.background)
             .toolbar(content: newHabitButton)
             .toolbarTitleDisplayMode(.inlineLarge)
+            .sheet(item: SheetManager.bindable.currentSheet) { $0.view }
         }
     }
     
     func newHabitButton() -> some View {
-        Button(action: { /* TODO: Add action */ }) {
+        Button {
+            SheetManager.shared.present(.habitInfoSheet())
+        } label: {
             Image(systemName: "plus")
                 .font(.system(size: 18, weight: .medium))
                 .foregroundStyle(.isLiquidGlassAvailable ? .complementary : .accent)
