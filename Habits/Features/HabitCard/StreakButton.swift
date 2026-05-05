@@ -70,7 +70,7 @@ struct StreakButton: View {
             .padding(8)
             .font(.headline)
             .frame(height: 38)
-            .foregroundStyle(isTodayChecked ? .complementary : .accent)
+            .foregroundStyle(isTodayChecked ? .streakButtonLabelChecked : .accent)
             .background(isTodayChecked ? .accent : .clear, in: RoundedRectangle(cornerRadius: 12))
         }
     }
