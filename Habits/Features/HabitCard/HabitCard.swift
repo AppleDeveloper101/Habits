@@ -22,6 +22,7 @@ struct HabitCard: View {
         .padding(12)
         .background(defaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
         .contentShape(RoundedRectangle(cornerRadius: 24).inset(by: 12))
+        .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 24))
         .onTapGesture {
             SheetManager.shared.present(.habitInfoSheet(habit))
         }

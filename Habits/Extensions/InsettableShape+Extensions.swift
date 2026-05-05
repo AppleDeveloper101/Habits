@@ -12,7 +12,7 @@ extension InsettableShape {
         self
             .fill(isElevated ? .shapeElevated : .shape)
             .overlay {
-                StrokeShapeView(
+                StrokeBorderShapeView(
                     shape: self,
                     style: .shapeStroke,
                     strokeStyle: .init(lineWidth: 1),
