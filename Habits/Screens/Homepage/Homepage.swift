@@ -6,14 +6,19 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct Homepage: View {
+    
+    @Query(sort: \Habit.timestamp, order: .reverse) private var habits: [Habit]
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    Color.clear
+                    ForEach(habits) {
+                        HabitCard($0)
+                    }
                 }
                 .padding([.leading, .trailing, .top], 16)
             }
@@ -44,8 +49,4 @@ struct Homepage: View {
             }
         }
     }
-}
-
-#Preview {
-    Homepage()
 }
