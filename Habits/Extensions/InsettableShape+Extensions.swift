@@ -7,12 +7,10 @@
 
 import SwiftUI
 
-// TODO: Consolidate
-
 extension InsettableShape {
-    func applyDefaultStyling() -> some View {
+    func applyDefaultStyling(isElevated: Bool = false) -> some View {
         self
-            .fill(.shape)
+            .fill(isElevated ? .shapeElevated : .shape)
             .overlay {
                 StrokeShapeView(
                     shape: self,
@@ -27,8 +25,8 @@ extension InsettableShape {
 }
 
 extension View {
-    func defaultStyleShape<S: InsettableShape>(_ shape: S) -> some View {
-        shape.applyDefaultStyling()
+    func defaultStyleShape<S: InsettableShape>(_ shape: S, isElevated: Bool = false) -> some View {
+        shape.applyDefaultStyling(isElevated: isElevated)
     }
 }
 
