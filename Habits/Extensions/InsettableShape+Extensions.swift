@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension InsettableShape {
-    func applyDefaultStyling(isElevated: Bool = false) -> some View {
+    func applyDefaultStyling(isElevated: Bool = false, isShadowEnabled: Bool = true) -> some View {
         self
             .fill(isElevated ? .shapeElevated : .shape)
             .overlay {
@@ -20,13 +20,13 @@ extension InsettableShape {
                     background: Color.clear
                 )
             }
-            .shadow(color: .shapeShadow, radius: 14, y: 4)
+            .shadow(color: isShadowEnabled ? .shapeShadow : .clear, radius: 14, y: 4)
     }
 }
 
 extension View {
-    func defaultStyleShape<S: InsettableShape>(_ shape: S, isElevated: Bool = false) -> some View {
-        shape.applyDefaultStyling(isElevated: isElevated)
+    func defaultStyleShape<S: InsettableShape>(_ shape: S, isElevated: Bool = false, isShadowEnabled: Bool = true) -> some View {
+        shape.applyDefaultStyling(isElevated: isElevated, isShadowEnabled: isShadowEnabled)
     }
 }
 
