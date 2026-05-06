@@ -16,24 +16,14 @@ struct HabitCard: View {
     }
     
     var body: some View {
-        ZStack {
-            defaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true)
-            
-            VStack(spacing: 8) {
-                header()
-            }
-            .padding(12)
-            .background(defaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true, isShadowEnabled: false))
-            .contentShape(RoundedRectangle(cornerRadius: 24).inset(by: 12))
-            .contentShape(.contextMenuPreview, RoundedRectangle(cornerRadius: 24))
-            .onTapGesture {
-                SheetManager.shared.present(.habitInfoSheet(habit))
-            }
-            .contextMenu {
-                Button("Delete", systemImage: "trash", role: .destructive) {
-                    DataManager.shared.delete(habit)
-                }
-            }
+        VStack(spacing: 8) {
+            header()
+        }
+        .padding(12)
+        .background(defaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
+        .contentShape(RoundedRectangle(cornerRadius: 24).inset(by: 12))
+        .onTapGesture {
+            SheetManager.shared.present(.habitInfoSheet(habit))
         }
     }
     
