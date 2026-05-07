@@ -22,6 +22,14 @@ extension View {
         }
     }
     
+    func readWidth(into property: Binding<CGFloat>) -> some View {
+        self.onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.size.width
+        } action: { width in
+            property.wrappedValue = width
+        }
+    }
+    
     func receiveKeyboardPresentationState(_ state: Binding<Bool>) -> some View {
         let willShow = NotificationCenter.default
             .publisher(for: UIResponder.keyboardWillShowNotification)
