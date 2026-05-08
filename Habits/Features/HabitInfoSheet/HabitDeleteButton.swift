@@ -9,10 +9,16 @@ import SwiftUI
 
 struct HabitDeleteButton: View {
     
-    @State private var buttonEngagementTask: Task<Void, Never>?
+    @State private var disengagingTask: Task<Void, Never>?
+    @State private var incrementationTask: Task<Void, Never>?
     
     @State private var currentProgress: Int = -1
     
+    private let disengagementTimeout = 1.5
+    
+    @State private var isHolding = false
+    
+    @State private var fillingAnimationTime: TimeInterval = 0.75
     @State private var holdTextWidth: CGFloat = 0
     @State private var timer: Timer?
     
@@ -46,26 +52,17 @@ struct HabitDeleteButton: View {
                     Text("hold to delete")
                         .font(.headline)
                         .foregroundStyle(.deleteButtonLabel)
-                        .transition(.blurReplace)
-                    //
                     Text("hold to delete")
                         .font(.headline)
                         .foregroundStyle(.deleteButtonLabelProgressing)
-                        .transition(.blurReplace)
                         .mask {
                             Capsule()
                                 .frame(
                                     width: currentProgress == 1 ? 66 : (fillingCapsuleWidth * CGFloat(currentProgress) / 3)
                                 )
-                                .animation(
-                                    currentProgress > 0
-                                    ? .spring(duration: 0.5, bounce: 0.25)
-                                    : .smooth(duration: 0.5),
-                                    value: currentProgress
-                                )
                         }
-                    
                 }
+                .transition(.blurReplace)
             }
         }
         .frame(height: 44)
@@ -84,26 +81,84 @@ struct HabitDeleteButton: View {
             .readWidth(into: $fillingCapsuleWidth)
         }
         .background(defaultStyleShape(.capsule))
+        .contentShape(.capsule)
         .animation(
             currentProgress > 0
-            ? .spring(duration: 0.5, bounce: 0.25)
-            : .smooth(duration: 0.5),
+            ? .spring(duration: fillingAnimationTime, bounce: 0.25)
+            : .smooth(duration: fillingAnimationTime),
             value: currentProgress
         )
-        .onTapGesture {
-            buttonEngagementTask?.cancel()
+        // MARK: - Gesture recognition
+        .onLongPressGesture(minimumDuration: 0.125) {
+            /// Finger is held on button beyond threshold time
+            debugPrint("🔄 Long Press")
             
-            if currentProgress < 3 {
-                currentProgress += 1
-            } else {
-                currentProgress = -1
+            disengagingTask?.cancel()
+            
+            debugPrint("🟧 Canceling disengagement Long Press")
+            
+            if currentProgress < 1 {
+                currentProgress = 1
             }
             
-            buttonEngagementTask = Task {
-                try? await Task.sleep(for: .seconds(4))
-                guard !Task.isCancelled else { return }
-                currentProgress = -1
+        } onPressingChanged: { isPressed in
+            /// Finger touches button
+            if isPressed {
+                debugPrint("⬇️ Pressed")
+                
+                if currentProgress == -1 {
+                    disengagingTask?.cancel()
+                    
+                    debugPrint("🟧 Canceling disengagement == -1")
+                    
+                    disengagingTask = Task {
+                        debugPrint("🔵 Setting disengagement task == -1")
+                        try? await Task.sleep(for: .seconds(disengagementTimeout))
+                        guard !Task.isCancelled else { return }
+                        currentProgress = -1
+                            debugPrint("🛑 Disengaged from isPressed == -1")
+                    }
+                }
+                
+                if currentProgress == 0 {
+                    disengagingTask?.cancel()
+                    
+                    debugPrint("🟧 Canceling disengagement == 0")
+                    
+                    disengagingTask = Task {
+                        debugPrint("🔵 Setting disengagement task == 0")
+                        try? await Task.sleep(for: .seconds(disengagementTimeout))
+                        guard !Task.isCancelled else { return }
+                        currentProgress = -1
+                        debugPrint("🛑 Disengaged from isPressed == 0")
+                    }
+                }
             }
+            
+            /// Button depressed, finger lifted off
+            if !isPressed {
+                debugPrint("⬆️ Depressed")
+                
+                if currentProgress == -1 {
+                    currentProgress = 0
+                }
+                
+                if currentProgress > 0 {
+                    incrementationTask?.cancel()
+                    currentProgress = 0
+                    disengagingTask = Task {
+                        debugPrint("🔵 Setting disengagement task > 0")
+                        try? await Task.sleep(for: .seconds(disengagementTimeout))
+                        guard !Task.isCancelled else { return }
+                        currentProgress = -1
+                        debugPrint("🛑 Disengaged from !isPressed > 0")
+                    }
+                }
+            }
+        }
+        /////////
+        .task {
+            print("\n\n\n\n\n\n\n\n\n\n\n\n")
         }
     }
 }
