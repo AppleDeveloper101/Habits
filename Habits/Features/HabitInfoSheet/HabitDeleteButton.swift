@@ -9,24 +9,21 @@ import SwiftUI
 
 struct HabitDeleteButton: View {
     
-    @State private var disengagingTask: Task<Void, Never>?
-    @State private var incrementationTask: Task<Void, Never>?
-    
-    @State private var currentProgress: Int = -1
-    
-    private let disengagementTimeout = 1.5
-    
-    @State private var isHolding = false
-    
-    @State private var fillingAnimationTime: TimeInterval = 0.75
-    private let incrementationThreshold: TimeInterval = 1
-    @State private var holdTextWidth: CGFloat = 0
-    @State private var timer: Timer?
-    
-    @State private var fillingCapsuleWidth: CGFloat = 0
-    
     private let habit: Habit
     private let action: () -> Void
+    
+    @State private var incrementationTask: Task<Void, Never>?
+    @State private var disengagingTask: Task<Void, Never>?
+    
+    @State private var isExpansionBlocked = false
+    @State private var currentProgress: Int = -1
+    
+    @State private var capsuleAnimationTime: TimeInterval = 0.75
+    private let holdToIncrementThreshold: TimeInterval = 1
+    private let disengagementTimeout = 5
+    
+    @State private var fillingCapsuleWidth: CGFloat = 0
+    @State private var holdTextWidth: CGFloat = 0
     
     init(_ habit: Habit, _ action: @escaping () -> Void) {
         self.habit = habit
@@ -85,12 +82,12 @@ struct HabitDeleteButton: View {
         .contentShape(.capsule)
         .animation(
             currentProgress > 0
-            ? .spring(duration: fillingAnimationTime, bounce: 0.25)
-            : .smooth(duration: fillingAnimationTime),
+            ? .spring(duration: capsuleAnimationTime, bounce: 0.25)
+            : .smooth(duration: capsuleAnimationTime),
             value: currentProgress
         )
         // MARK: - Gesture recognition
-        .onLongPressGesture(minimumDuration: 0.125) {
+        .onLongPressGesture(minimumDuration: 0.133) {
             /// Finger is held on button beyond threshold time
             disengagingTask?.cancel()
             
@@ -103,16 +100,18 @@ struct HabitDeleteButton: View {
                     guard currentProgress < 4 else {
                         Task(name: "Action Execution") {
                             incrementationTask?.cancel()
+                            isExpansionBlocked = true
                             currentProgress = -1
                             
-                            try? await Task.sleep(for: .seconds(incrementationThreshold))
+                            try? await Task.sleep(for: .seconds(holdToIncrementThreshold))
+                            
                             action()
                         }
                         
                         break
                     }
                     
-                    try? await Task.sleep(for: .seconds(incrementationThreshold))
+                    try? await Task.sleep(for: .seconds(holdToIncrementThreshold))
                     guard !Task.isCancelled else { return }
                     
                     currentProgress += 1
@@ -122,6 +121,8 @@ struct HabitDeleteButton: View {
         } onPressingChanged: { isPressed in
             /// Finger touches button
             if isPressed {
+                isExpansionBlocked = false
+                
                 if currentProgress == -1 {
                     disengagingTask?.cancel()
                     
@@ -145,13 +146,12 @@ struct HabitDeleteButton: View {
             
             /// Button depressed, finger lifted off
             if !isPressed {
-                incrementationTask?.cancel()
-                
-                if currentProgress == -1 {
+                if currentProgress == -1 && !isExpansionBlocked {
                     currentProgress = 0
                 }
                 
                 if currentProgress > 0 {
+                    incrementationTask?.cancel()
                     currentProgress = 0
                     disengagingTask = Task {
                         try? await Task.sleep(for: .seconds(disengagementTimeout))
