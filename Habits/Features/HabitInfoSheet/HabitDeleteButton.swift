@@ -19,6 +19,7 @@ struct HabitDeleteButton: View {
     @State private var isHolding = false
     
     @State private var fillingAnimationTime: TimeInterval = 0.75
+    private let incrementationThreshold: TimeInterval = 1
     @State private var holdTextWidth: CGFloat = 0
     @State private var timer: Timer?
     
@@ -91,67 +92,71 @@ struct HabitDeleteButton: View {
         // MARK: - Gesture recognition
         .onLongPressGesture(minimumDuration: 0.125) {
             /// Finger is held on button beyond threshold time
-            debugPrint("🔄 Long Press")
-            
             disengagingTask?.cancel()
-            
-            debugPrint("🟧 Canceling disengagement Long Press")
             
             if currentProgress < 1 {
                 currentProgress = 1
             }
             
+            incrementationTask = Task {
+                while true {
+                    guard currentProgress < 4 else {
+                        Task(name: "Action Execution") {
+                            incrementationTask?.cancel()
+                            currentProgress = -1
+                            
+                            try? await Task.sleep(for: .seconds(incrementationThreshold))
+                            action()
+                        }
+                        
+                        break
+                    }
+                    
+                    try? await Task.sleep(for: .seconds(incrementationThreshold))
+                    guard !Task.isCancelled else { return }
+                    
+                    currentProgress += 1
+                }
+            }
+            
         } onPressingChanged: { isPressed in
             /// Finger touches button
             if isPressed {
-                debugPrint("⬇️ Pressed")
-                
                 if currentProgress == -1 {
                     disengagingTask?.cancel()
                     
-                    debugPrint("🟧 Canceling disengagement == -1")
-                    
                     disengagingTask = Task {
-                        debugPrint("🔵 Setting disengagement task == -1")
                         try? await Task.sleep(for: .seconds(disengagementTimeout))
                         guard !Task.isCancelled else { return }
                         currentProgress = -1
-                            debugPrint("🛑 Disengaged from isPressed == -1")
                     }
                 }
                 
                 if currentProgress == 0 {
                     disengagingTask?.cancel()
                     
-                    debugPrint("🟧 Canceling disengagement == 0")
-                    
                     disengagingTask = Task {
-                        debugPrint("🔵 Setting disengagement task == 0")
                         try? await Task.sleep(for: .seconds(disengagementTimeout))
                         guard !Task.isCancelled else { return }
                         currentProgress = -1
-                        debugPrint("🛑 Disengaged from isPressed == 0")
                     }
                 }
             }
             
             /// Button depressed, finger lifted off
             if !isPressed {
-                debugPrint("⬆️ Depressed")
+                incrementationTask?.cancel()
                 
                 if currentProgress == -1 {
                     currentProgress = 0
                 }
                 
                 if currentProgress > 0 {
-                    incrementationTask?.cancel()
                     currentProgress = 0
                     disengagingTask = Task {
-                        debugPrint("🔵 Setting disengagement task > 0")
                         try? await Task.sleep(for: .seconds(disengagementTimeout))
                         guard !Task.isCancelled else { return }
                         currentProgress = -1
-                        debugPrint("🛑 Disengaged from !isPressed > 0")
                     }
                 }
             }
