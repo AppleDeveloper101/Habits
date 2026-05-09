@@ -58,16 +58,24 @@ struct HabitInfoSheet: View {
     private func sheetContent() -> some View {
         VStack(spacing: 24) {
             sheetHeader()
-                .padding([.leading, .trailing, .top], 16)
-            inputControls()
-                .padding(.horizontal, 16)
-                .modify { view in
-                    if #available(iOS 26.0, *) {
-                        view.padding(.bottom, calculatedBottomEdgePadding)
-                    } else {
-                        view
+            VStack(spacing: 12) {
+                inputControls()
+                
+                if let habit {
+                    HabitDeleteButton(habit) {
+                        DataManager.shared.delete(habit)
+                        dismiss()
                     }
                 }
+            }
+        }
+        .padding([.leading, .trailing, .top], 16)
+        .modify { view in
+            if #available(iOS 26.0, *) {
+                view.padding(.bottom, calculatedBottomEdgePadding)
+            } else {
+                view
+            }
         }
     }
     
@@ -148,7 +156,7 @@ struct HabitInfoSheet: View {
     
     Color.background.ignoresSafeArea()
         .sheet(isPresented: $isPresented) {
-            HabitInfoSheet()
+            HabitInfoSheet(.init(emoji: "🥖", title: "Baguette"))
         }
         .onTapGesture {
             isPresented = true
