@@ -10,7 +10,7 @@ import SwiftData
 
 @Model class Record {
     
-    var habit: Habit
+    var habit: Habit?
     var timestamp: Date
     
     init(

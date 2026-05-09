@@ -49,7 +49,7 @@ struct StreakButton: View {
         let fetchedRecordsHabitID = habit.persistentModelID
         
         let predicate = #Predicate<Record> { record in
-            record.habit.persistentModelID == fetchedRecordsHabitID
+            record.habit?.persistentModelID == fetchedRecordsHabitID
         }
         
         self._records = Query(filter: predicate, sort: \.timestamp)
