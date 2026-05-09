@@ -18,8 +18,8 @@ struct HabitDeleteButton: View {
     @State private var isExpansionBlocked = false
     @State private var currentProgress: Int = -1
     
-    @State private var capsuleAnimationTime: TimeInterval = 0.75
     private let holdToIncrementThreshold: TimeInterval = 1
+    private let capsuleAnimationTime: TimeInterval = 0.75
     private let disengagementTimeout = 5
     
     @State private var fillingCapsuleWidth: CGFloat = 0
@@ -46,27 +46,36 @@ struct HabitDeleteButton: View {
                     .foregroundStyle(.deleteButtonLabel)
                     .transition(.blurReplace)
             } else {
-                ZStack {
-                    Text("hold to delete")
-                        .font(.headline)
-                        .foregroundStyle(.deleteButtonLabel)
-                    Text("hold to delete")
-                        .font(.headline)
-                        .foregroundStyle(.deleteButtonLabelProgressing)
-                        .mask {
-                            Capsule()
-                                .frame(
-                                    width: currentProgress == 1 ? 66 : (fillingCapsuleWidth * CGFloat(currentProgress) / 3)
-                                )
-                        }
-                }
-                .transition(.blurReplace)
+                Text("hold to delete")
+                    .font(.headline)
+                    .foregroundStyle(.deleteButtonLabel)
+                    .transition(.blurReplace)
             }
         }
         .frame(height: 44)
         .padding(.leading, currentProgress > -1 ? 12 : 6)
         .padding(.trailing, currentProgress > -1 ? 12 : 8)
         .frame(maxWidth: currentProgress > -1 ? .infinity : nil)
+        .overlay {
+            ZStack {
+                if currentProgress != -1 {
+                    Text("hold to delete")
+                        .font(.headline)
+                        .foregroundStyle(.deleteButtonLabelProgressing)
+                        .transition(.blurReplace)
+                } else { Color.clear }
+            }
+            .mask {
+                Capsule()
+                    .frame(width: currentProgress == 1 ? 66 : (fillingCapsuleWidth * CGFloat(currentProgress) / 3))
+                    .animation(
+                        currentProgress > 0
+                        ? .spring(duration: capsuleAnimationTime, bounce: 0.25)
+                        : .smooth(duration: capsuleAnimationTime),
+                        value: currentProgress
+                    )
+            }
+        }
         .background {
             GeometryReader { proxy in
                 Capsule()
@@ -87,7 +96,7 @@ struct HabitDeleteButton: View {
             value: currentProgress
         )
         // MARK: - Gesture recognition
-        .onLongPressGesture(minimumDuration: 0.133) {
+        .onLongPressGesture(minimumDuration: 0.125) {
             /// Finger is held on button beyond threshold time
             disengagingTask?.cancel()
             
@@ -160,10 +169,6 @@ struct HabitDeleteButton: View {
                     }
                 }
             }
-        }
-        /////////
-        .task {
-            print("\n\n\n\n\n\n\n\n\n\n\n\n")
         }
     }
 }
