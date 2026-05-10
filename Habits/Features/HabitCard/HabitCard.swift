@@ -30,9 +30,17 @@ struct HabitCard: View {
     private func header() -> some View {
         HStack {
             HStack(spacing: 4) {
-                Text(habit.emoji)
-                    .frame(width: 38, height: 38)
-                    .font(.system(size: 34, weight: .regular))
+                if !habit.emoji.isEmpty {
+                    Text(habit.emoji)
+                        .frame(width: 38, height: 38)
+                        .font(.system(size: 34, weight: .regular))
+                } else {
+                    Text("🎯")
+                        .saturation(0)
+                        .contrast(1.17)
+                        .frame(width: 38, height: 38)
+                        .font(.system(size: 34, weight: .regular))
+                }
                 Text(habit.title)
                     .font(.headline)
             }
