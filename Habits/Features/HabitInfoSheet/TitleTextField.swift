@@ -11,6 +11,13 @@ struct TitleTextField: View {
     
     @Binding var title: String
     
+    @State private var promptText: String
+
+    init(title: Binding<String>) {
+        self._title = title
+        self.promptText = title.wrappedValue.isEmpty ? "New Habit..." : title.wrappedValue
+    }
+    
     var body: some View {
         TextField("Habit Title", text: $title, prompt: prompt)
             .tint(.accent)
@@ -22,7 +29,7 @@ struct TitleTextField: View {
     }
     
     private var prompt: Text {
-        Text("Habit Title...")
+        Text(promptText)
             .font(.headline)
             .foregroundStyle(.habitInfoSheetLabel)
     }
