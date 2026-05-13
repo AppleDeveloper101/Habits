@@ -9,8 +9,6 @@ import SwiftUI
 
 struct HabitInfoSheet: View {
     
-    @Environment(\.dismiss) private var dismiss
-    
     private let habit: Habit?
     
     @State private var emoji: String
@@ -64,7 +62,7 @@ struct HabitInfoSheet: View {
                 if let habit {
                     HabitDeleteButton(habit) {
                         DataManager.shared.delete(habit)
-                        dismiss()
+                        SheetManager.shared.dismiss()
                     }
                 }
             }
@@ -93,7 +91,7 @@ struct HabitInfoSheet: View {
     
     private func cancelButton() -> some View {
         Button {
-            dismiss()
+            SheetManager.shared.dismiss()
         } label: {
             Circle()
                 .frame(height: 44)
@@ -122,7 +120,7 @@ struct HabitInfoSheet: View {
             } else {
                 DataManager.shared.insert(Habit(emoji: emoji, title: title))
             }
-            dismiss()
+            SheetManager.shared.dismiss()
         } label: {
             Circle()
                 .frame(height: 44)
