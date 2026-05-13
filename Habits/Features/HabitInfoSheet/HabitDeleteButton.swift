@@ -89,15 +89,15 @@ struct HabitDeleteButton: View {
         }
         .background(defaultStyleShape(.capsule))
         .contentShape(.capsule)
+        .sensoryFeedback(.increase, trigger: currentProgress) { _, _ in (1...3).contains(currentProgress) }
+        .sensoryFeedback(.impact, trigger: currentProgress) { _, _ in currentProgress == 4 }
         .animation(
             currentProgress > 0
             ? .spring(duration: capsuleAnimationTime, bounce: 0.25)
             : .smooth(duration: capsuleAnimationTime),
             value: currentProgress
         )
-        // MARK: - Gesture recognition
         .onLongPressGesture(minimumDuration: 0.125) {
-            /// Finger is held on button beyond threshold time
             disengagingTask?.cancel()
             
             if currentProgress < 1 {
@@ -128,7 +128,6 @@ struct HabitDeleteButton: View {
             }
             
         } onPressingChanged: { isPressed in
-            /// Finger touches button
             if isPressed {
                 isExpansionBlocked = false
                 
@@ -152,8 +151,6 @@ struct HabitDeleteButton: View {
                     }
                 }
             }
-            
-            /// Button depressed, finger lifted off
             if !isPressed {
                 if currentProgress == -1 && !isExpansionBlocked {
                     currentProgress = 0
@@ -171,11 +168,4 @@ struct HabitDeleteButton: View {
             }
         }
     }
-}
-
-#Preview {
-    HabitDeleteButton(.init(emoji: "A", title: "A")) {
-        print("Action!")
-    }
-    .padding(.horizontal, 16)
 }
