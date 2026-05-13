@@ -35,13 +35,13 @@ struct HabitInfoSheet: View {
         self.title = habit?.title ?? ""
     }
     
-    // TODO: Suppress background dimming (also required for color matching with pre-iOS 26 builds)
     var body: some View {
         Color.clear.overlay(alignment: .top) {
             sheetContent()
                 .presentationBackground(.isLiquidGlassAvailable ? .sheetBackgroundGlass : .sheetBackground)
                 .receiveKeyboardPresentationState($isKeyboardPresented)
                 .presentationDetents([.height(contentHeight)])
+                .presentationBackgroundInteraction(.enabled)
                 .readHeight(into: $contentHeight)
                 .modify { view in
                     if #available(iOS 26.0, *) {
@@ -112,6 +112,7 @@ struct HabitInfoSheet: View {
         }
     }
     
+    // TODO: Disable when title is empty
     private func confirmButton() -> some View {
         Button {
             if let habit {
