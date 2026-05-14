@@ -38,7 +38,6 @@ struct HabitInfoSheet: View {
     var body: some View {
         Color.clear.overlay(alignment: .top) {
             sheetContent()
-                .presentationBackground(.isLiquidGlassAvailable ? .sheetBackgroundGlass : .sheetBackground)
                 .receiveKeyboardPresentationState($isKeyboardPresented)
                 .presentationDetents([.height(contentHeight)])
                 .presentationBackgroundInteraction(.enabled)
@@ -46,8 +45,11 @@ struct HabitInfoSheet: View {
                 .modify { view in
                     if #available(iOS 26.0, *) {
                         view
+                            .presentationBackground(.sheetBackgroundGlass)
                     } else {
-                        view.presentationCornerRadius(38)
+                        view
+                            .presentationCornerRadius(38)
+                            .presentationBackground { Color.sheetBackground.padding(-999_999) }
                     }
                 }
         }
