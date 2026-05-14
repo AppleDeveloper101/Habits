@@ -11,6 +11,8 @@ struct TitleTextField: View {
     
     @Binding var title: String
     
+    @FocusState private var isFocused
+    
     @State private var promptText: String
 
     init(title: Binding<String>) {
@@ -25,7 +27,9 @@ struct TitleTextField: View {
             .foregroundStyle(.accent)
             .frame(height: 44)
             .padding(.horizontal, 12)
+            .focused($isFocused)
             .background(defaultStyleShape(.capsule))
+            .onTapGesture { isFocused = true }
     }
     
     private var prompt: Text {
