@@ -15,12 +15,14 @@ struct Homepage: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(habits) {
-                        HabitCard($0)
+                if !habits.isEmpty {
+                    VStack(spacing: 16) {
+                        ForEach(habits) {
+                            HabitCard($0)
+                        }
                     }
+                    .padding([.leading, .trailing, .top], 16)
                 }
-                .padding([.leading, .trailing, .top], 16)
             }
             .navigationTitle("Habits")
             .scrollIndicators(.hidden)
