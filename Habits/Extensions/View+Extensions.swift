@@ -10,6 +10,10 @@ import SwiftUI
 
 extension View {
     
+    func modalPresenter() -> some View {
+        modifier(ModalPresenter())
+    }
+    
     func modify(@ViewBuilder _ transform: (_ view: Self) -> some View) -> some View {
         transform(self)
     }
