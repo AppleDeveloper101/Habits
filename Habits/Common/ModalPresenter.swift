@@ -55,7 +55,7 @@ struct ModalPresenter: ViewModifier {
                         }
                     }
                     .shadow(color: .black.opacity(0.06), radius: 8)
-                    .shadow(color: .pink, radius: 2)
+                    .padding([.leading, .trailing, .bottom], sheetPadding)
                     .contentShape(glassShape)
             }
             .ignoresSafeArea()

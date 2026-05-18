@@ -29,20 +29,9 @@ struct Homepage: View {
             .background(Color.background)
             .toolbar(content: newHabitButton)
             .toolbarTitleDisplayMode(.inlineLarge)
-            .sheet(item: SheetManager.bindable.currentSheet) { $0.view }
-            .overlay {
-                if SheetManager.shared.currentSheet != nil {
-                    Color.clear.contentShape(.rect)
-                        .onTapGesture { SheetManager.shared.dismiss() }
-                }
-            }
         }
-        .animation(.smooth) { view in
-            view.blur(radius: SheetManager.shared.currentSheet == nil ? 0 : 6)
-        }
+        .modalPresenter()
     }
-    
-    // TODO: Disable when sheet is presented
     
     func newHabitButton() -> some View {
         Button {

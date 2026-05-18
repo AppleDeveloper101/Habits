@@ -10,7 +10,6 @@ import SwiftUI
 @Observable final class SheetManager {
     
     static let shared = SheetManager()
-    static let bindable = Bindable(shared)
     
     private init() {}
     
