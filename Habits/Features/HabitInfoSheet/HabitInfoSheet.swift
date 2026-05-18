@@ -14,21 +14,6 @@ struct HabitInfoSheet: View {
     @State private var emoji: String
     @State private var title: String
     
-    @State private var contentHeight: CGFloat = 0
-    @State private var isKeyboardPresented = false
-    
-    private var bottomEdgeSafeAreaInset: CGFloat {
-        let windowScene = UIApplication.shared.connectedScenes.first { scene in
-            scene.activationState == .foregroundActive
-        } as? UIWindowScene
-        
-        return windowScene?.keyWindow?.safeAreaInsets.bottom ?? 0
-    }
-    
-    private var calculatedBottomEdgePadding: CGFloat {
-        isKeyboardPresented ? 0 : (16 - bottomEdgeSafeAreaInset)
-    }
-    
     init(_ habit: Habit? = nil) {
         self.habit = habit
         self.emoji = habit?.emoji ?? ""
@@ -36,26 +21,6 @@ struct HabitInfoSheet: View {
     }
     
     var body: some View {
-        Color.clear.overlay(alignment: .top) {
-            sheetContent()
-                .receiveKeyboardPresentationState($isKeyboardPresented)
-                .presentationDetents([.height(contentHeight)])
-                .presentationBackgroundInteraction(.enabled)
-                .readHeight(into: $contentHeight)
-                .modify { view in
-                    if #available(iOS 26.0, *) {
-                        view
-                            .presentationBackground(.sheetBackgroundGlass)
-                    } else {
-                        view
-                            .presentationCornerRadius(38)
-                            .presentationBackground { Color.sheetBackground.padding(-999_999) }
-                    }
-                }
-        }
-    }
-    
-    private func sheetContent() -> some View {
         VStack(spacing: 24) {
             sheetHeader()
             VStack(spacing: 12) {
@@ -69,14 +34,7 @@ struct HabitInfoSheet: View {
                 }
             }
         }
-        .padding([.leading, .trailing, .top], 16)
-        .modify { view in
-            if #available(iOS 26.0, *) {
-                view.padding(.bottom, calculatedBottomEdgePadding)
-            } else {
-                view
-            }
-        }
+        .padding(16)
     }
     
     private func sheetHeader() -> some View {
