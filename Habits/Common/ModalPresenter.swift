@@ -11,9 +11,15 @@ struct ModalPresenter: ViewModifier {
     
     private var isPresented: Bool { SheetManager.shared.currentSheet != nil }
     
+    @State private var contentHeight: CGFloat = 0
+    
+    private var sheetPadding: CGFloat = 8
     private let sheetTopEdgeCornerRadius: CGFloat = 38
-    private var screenEdgesPadding: CGFloat { CGFloat.displayCornerRadius == 0 ? 0 : 8 }
-    private var sheetBottomEdgeCornerRadius: CGFloat { .displayCornerRadius - screenEdgesPadding }
+    private var sheetBottomEdgeCornerRadius: CGFloat {
+        CGFloat.displayCornerRadius == 0
+        ? sheetTopEdgeCornerRadius
+        : .displayCornerRadius - sheetPadding
+    }
     
     var glassShape: some Shape {
         UnevenRoundedRectangle(
@@ -36,25 +42,22 @@ struct ModalPresenter: ViewModifier {
                 }
             }
             .overlay(alignment: .bottom) {
-                if isPresented {
-                    SheetManager.shared.currentSheet?.view
-                        .frame(maxWidth: .infinity, maxHeight: 250)
-                        .modify { view in
-                            if #available(iOS 26.0, *) {
-                                view
-                                    .glassEffect(.clear.interactive(), in: glassShape)
-                            } else {
-                                view
-                                    .background(.sheetBackground, in: glassShape)
-                            }
+                SheetManager.shared.currentSheet?.view
+                    .readHeight(into: $contentHeight)
+                    .frame(maxWidth: .infinity, maxHeight: contentHeight)
+                    .modify { view in
+                        if #available(iOS 26.0, *) {
+                            view
+                                .glassEffect(.regular.interactive(), in: glassShape)
+                        } else {
+                            view
+                                .background(.sheetBackground, in: glassShape)
                         }
-                        .shadow(color: .black.opacity(0.06), radius: 8)
-                        .padding([.leading, .trailing, .bottom], screenEdgesPadding)
-                        .contentShape(glassShape)
-                        .transition(.move(edge: .bottom))
-                }
+                    }
+                    .shadow(color: .black.opacity(0.06), radius: 8)
+                    .shadow(color: .pink, radius: 2)
+                    .contentShape(glassShape)
             }
             .ignoresSafeArea()
-            .animation(.smooth(duration: 0.375), value: isPresented)
     }
 }
