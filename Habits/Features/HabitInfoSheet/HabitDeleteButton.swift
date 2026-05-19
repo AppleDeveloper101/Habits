@@ -15,12 +15,13 @@ struct HabitDeleteButton: View {
     @State private var incrementationTask: Task<Void, Never>?
     @State private var disengagingTask: Task<Void, Never>?
     
-    @State private var isExpansionBlocked = false
+    @State private var isCancelled = false
     @State private var currentProgress: Int = -1
     
+    private let cancelationDistanceThreshold: CGFloat = 66
     private let holdToIncrementThreshold: TimeInterval = 1
     private let capsuleAnimationTime: TimeInterval = 0.75
-    private let disengagementTimeout = 5
+    private let disengagementTimeout = 3
     
     @State private var fillingCapsuleWidth: CGFloat = 0
     @State private var holdTextWidth: CGFloat = 0
@@ -97,75 +98,100 @@ struct HabitDeleteButton: View {
             : .smooth(duration: capsuleAnimationTime),
             value: currentProgress
         )
-        .onLongPressGesture(minimumDuration: 0.125) {
-            disengagingTask?.cancel()
-            
-            if currentProgress < 1 {
-                currentProgress = 1
-            }
-            
-            incrementationTask = Task {
-                while true {
-                    guard currentProgress < 4 else {
-                        Task(name: "Action Execution") {
+        .gesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { drag in
+                    guard abs(drag.translation.height) <= cancelationDistanceThreshold && !isCancelled else {
+                        if currentProgress > 0 {
+                            isCancelled = true
                             incrementationTask?.cancel()
-                            isExpansionBlocked = true
+                            currentProgress = 0
+                            disengagingTask = Task {
+                                try? await Task.sleep(for: .seconds(disengagementTimeout))
+                                guard !Task.isCancelled else { return }
+                                currentProgress = -1
+                            }
+                        }
+                        return
+                    }
+                    
+                    if currentProgress == -1 && !isCancelled {
+                        currentProgress = 0
+                    }
+                    
+                    if currentProgress == -1 {
+                        disengagingTask?.cancel()
+                        
+                        disengagingTask = Task {
+                            try? await Task.sleep(for: .seconds(disengagementTimeout))
+                            guard !Task.isCancelled else { return }
                             currentProgress = -1
+                        }
+                    }
+                    
+                    if currentProgress == 0 {
+                        disengagingTask?.cancel()
+                        
+                        disengagingTask = Task {
+                            try? await Task.sleep(for: .seconds(disengagementTimeout))
+                            guard !Task.isCancelled else { return }
+                            currentProgress = -1
+                        }
+                    }
+                }
+                .onEnded { drag in
+                    isCancelled = false
+                    
+                    if currentProgress > 0 {
+                        incrementationTask?.cancel()
+                        currentProgress = 0
+                        disengagingTask = Task {
+                            try? await Task.sleep(for: .seconds(disengagementTimeout))
+                            guard !Task.isCancelled else { return }
+                            currentProgress = -1
+                        }
+                    }
+                }
+        )
+        .simultaneousGesture(
+            LongPressGesture(minimumDuration: 0.125)
+                .onEnded { value in
+                    disengagingTask?.cancel()
+                    
+                    if currentProgress < 1 {
+                        currentProgress = 1
+                    }
+                    
+                    incrementationTask = Task {
+                        while true {
+                            guard currentProgress < 4 else {
+                                Task(name: "HabitDeleteButton Action") {
+                                    isCancelled = true
+                                    currentProgress = -1
+                                    incrementationTask?.cancel()
+                                    
+                                    try? await Task.sleep(for: .seconds(holdToIncrementThreshold))
+                                    
+                                    action()
+                                }
+                                
+                                break
+                            }
                             
                             try? await Task.sleep(for: .seconds(holdToIncrementThreshold))
+                            guard !Task.isCancelled else { return }
                             
-                            action()
+                            currentProgress += 1
                         }
-                        
-                        break
-                    }
-                    
-                    try? await Task.sleep(for: .seconds(holdToIncrementThreshold))
-                    guard !Task.isCancelled else { return }
-                    
-                    currentProgress += 1
-                }
-            }
-            
-        } onPressingChanged: { isPressed in
-            if isPressed {
-                isExpansionBlocked = false
-                
-                if currentProgress == -1 {
-                    disengagingTask?.cancel()
-                    
-                    disengagingTask = Task {
-                        try? await Task.sleep(for: .seconds(disengagementTimeout))
-                        guard !Task.isCancelled else { return }
-                        currentProgress = -1
                     }
                 }
-                
-                if currentProgress == 0 {
-                    disengagingTask?.cancel()
-                    
-                    disengagingTask = Task {
-                        try? await Task.sleep(for: .seconds(disengagementTimeout))
-                        guard !Task.isCancelled else { return }
-                        currentProgress = -1
-                    }
-                }
-            }
-            if !isPressed {
-                if currentProgress == -1 && !isExpansionBlocked {
-                    currentProgress = 0
-                }
-                
-                if currentProgress > 0 {
-                    incrementationTask?.cancel()
-                    currentProgress = 0
-                    disengagingTask = Task {
-                        try? await Task.sleep(for: .seconds(disengagementTimeout))
-                        guard !Task.isCancelled else { return }
-                        currentProgress = -1
-                    }
-                }
-            }
-        }
+        )
     }
+}
+
+#Preview {
+    HabitDeleteButton(.init(emoji: "S", title: "Sample")) {
+        
+    }
+    .padding(.horizontal, 32)
 }
