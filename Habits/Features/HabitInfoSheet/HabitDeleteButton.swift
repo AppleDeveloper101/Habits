@@ -26,6 +26,9 @@ struct HabitDeleteButton: View {
     @State private var fillingCapsuleWidth: CGFloat = 0
     @State private var holdTextWidth: CGFloat = 0
     
+    @State private var buttonFrame: CGRect = .zero
+    @State private var dragLocation: CGPoint = .zero
+    
     init(_ habit: Habit, _ action: @escaping () -> Void) {
         self.habit = habit
         self.action = action
@@ -90,18 +93,29 @@ struct HabitDeleteButton: View {
         }
         .background(defaultStyleShape(.capsule))
         .contentShape(.capsule)
-        .sensoryFeedback(.increase, trigger: currentProgress) { _, _ in (1...3).contains(currentProgress) }
-        .sensoryFeedback(.impact, trigger: currentProgress) { _, _ in currentProgress == 4 }
-        .animation(
-            currentProgress > 0
-            ? .spring(duration: capsuleAnimationTime, bounce: 0.25)
-            : .smooth(duration: capsuleAnimationTime),
-            value: currentProgress
-        )
+        .onGeometryChange(for: CGRect.self, of: { proxy in
+            proxy.frame(in: .global)
+        }, action: { newFrame in
+            if newFrame.minY != buttonFrame.minY || newFrame.minX != buttonFrame.minX {
+                if currentProgress > 0 {
+                    isCancelled = true
+                    incrementationTask?.cancel()
+                    currentProgress = 0
+                    disengagingTask = Task {
+                        try? await Task.sleep(for: .seconds(disengagementTimeout))
+                        guard !Task.isCancelled else { return }
+                        currentProgress = -1
+                    }
+                }
+            }
+            buttonFrame = newFrame
+        })
         .gesture(
-            DragGesture(minimumDistance: 0)
+            DragGesture(minimumDistance: 0, coordinateSpace: .global)
                 .onChanged { drag in
-                    guard abs(drag.translation.height) <= cancelationDistanceThreshold && !isCancelled else {
+                    dragLocation = drag.location
+                    
+                    guard buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) && !isCancelled else {
                         if currentProgress > 0 {
                             isCancelled = true
                             incrementationTask?.cancel()
@@ -154,7 +168,7 @@ struct HabitDeleteButton: View {
                 }
         )
         .simultaneousGesture(
-            LongPressGesture(minimumDuration: 0.125)
+            LongPressGesture(minimumDuration: 0.125, maximumDistance: .infinity)
                 .onEnded { value in
                     disengagingTask?.cancel()
                     
@@ -169,7 +183,6 @@ struct HabitDeleteButton: View {
                                     isCancelled = true
                                     currentProgress = -1
                                     incrementationTask?.cancel()
-                                    
                                     try? await Task.sleep(for: .seconds(holdToIncrementThreshold))
                                     
                                     action()
@@ -185,6 +198,14 @@ struct HabitDeleteButton: View {
                         }
                     }
                 }
+        )
+        .sensoryFeedback(.increase, trigger: currentProgress) { _, _ in (1...3).contains(currentProgress) }
+        .sensoryFeedback(.impact, trigger: currentProgress) { _, _ in currentProgress == 4 }
+        .animation(
+            currentProgress > 0
+            ? .spring(duration: capsuleAnimationTime, bounce: 0.25)
+            : .smooth(duration: capsuleAnimationTime),
+            value: currentProgress
         )
     }
 }
