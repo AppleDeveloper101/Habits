@@ -30,6 +30,19 @@ extension View {
     }
 }
 
+struct DefaultStyleShape<S: InsettableShape>: View {
+    
+    private let shape: S
+    
+    init(_ shape: S) {
+        self.shape = shape
+    }
+    
+    var body: some View {
+        shape.applyDefaultStyling()
+    }
+}
+
 #Preview {
     VStack(spacing: 38) {
         RoundedRectangle(cornerRadius: 36)
