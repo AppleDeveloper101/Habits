@@ -48,7 +48,10 @@ struct ConfirmationButton: View {
             
             guard isHolding && !isCanceled else { return }
             
-            if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) && isHolding { isCanceled = true }
+            if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) && isHolding {
+                isCanceled = true
+                AudioServicesPlaySystemSound(1100)
+            }
         }
         .gesture(
             DragGesture(minimumDistance: .zero, coordinateSpace: .global)
@@ -59,7 +62,17 @@ struct ConfirmationButton: View {
                     
                     isHolding = true
                     
-                    if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) && isHolding { isCanceled = true }
+                    guard status != .resting else { return }
+                    
+                    let movedX = abs(drag.translation.width)
+                    let movedY = abs(drag.translation.height)
+                    
+                    if movedX > 0 || movedY > 0 {
+                        if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) {
+                            isCanceled = true
+                            AudioServicesPlaySystemSound(1075)
+                        }
+                    }
                 }
                 .onEnded { drag in
                     isCanceled = false
@@ -69,13 +82,9 @@ struct ConfirmationButton: View {
             if !isHolding || isCanceled { disengage() }
             if isHolding && !isCanceled { engage() }
         }
-        
-        .animation(.smooth, value: status) // Rfmrt
-        .animation(.smooth, value: isHolding) // Rfmrt
-        .animation(.smooth, value: isCanceled) // Rfmrt
-        
-        .onChange(of: isCanceled) { _, newValue in if newValue == true { AudioServicesPlaySystemSound(1100) } } // MARK: DB
-        .onChange(of: isHolding) { _, newValue in if newValue == false { AudioServicesPlaySystemSound(1103) } } // MARK: DB
+        .animation(.smooth, value: status)
+        .animation(.smooth, value: isHolding)
+        .animation(.smooth, value: isCanceled)
     }
 }
 
@@ -100,7 +109,7 @@ private extension ConfirmationButton {
         disengagementTask = Task {
             progress = 0
             
-            try? await Task.sleep(for: .seconds(0.5)) // Order matter
+            try? await Task.sleep(for: .seconds(1))
             guard !Task.isCancelled else { return }
             
             progress = -1
