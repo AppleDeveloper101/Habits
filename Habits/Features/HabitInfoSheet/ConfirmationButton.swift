@@ -40,6 +40,7 @@ struct ConfirmationButton: View {
         .padding(.trailing, 8)
         .frame(maxWidth: status == .resting ? nil : .infinity)
         .background { DefaultStyleShape(.capsule) }
+        .allowsHitTesting(!isHolding)
         .onGeometryChange(for: CGRect.self) { proxy in
             proxy.frame(in: .global)
         } action: { newFrame in
@@ -135,7 +136,6 @@ private extension ConfirmationButton {
         case engaged
         case incrementing
         case executingAction
-        
         case undefined
     }
     
@@ -145,7 +145,6 @@ private extension ConfirmationButton {
         case 0 : return .engaged
         case 0...3: return .incrementing
         case 3...: return .executingAction
-            
         default: return .undefined
         }
     }
