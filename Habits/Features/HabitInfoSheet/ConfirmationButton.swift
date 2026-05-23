@@ -60,24 +60,25 @@ struct ConfirmationButton: View {
                     
                     guard !isCanceled else { return }
                     
-                    isHolding = true
+                    let deltaX = abs(drag.translation.width)
+                    let deltaY = abs(drag.translation.height)
                     
-                    guard status != .resting else { return }
-                    
-                    let movedX = abs(drag.translation.width)
-                    let movedY = abs(drag.translation.height)
-                    
-                    if movedX > 0 || movedY > 0 {
+                    if deltaX > 0 || deltaY > 0 {
                         if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) {
                             isCanceled = true
                             AudioServicesPlaySystemSound(1075)
                         }
                     }
+                    
+                    guard !isHolding else { return }
+                    
+                    isHolding = true
                 }
                 .onEnded { drag in
                     isCanceled = false
                 }
         )
+        
         .onChange(of: [isHolding, isCanceled]) { oldValue, newValue in
             if !isHolding || isCanceled { disengage() }
             if isHolding && !isCanceled { engage() }
@@ -95,9 +96,16 @@ private extension ConfirmationButton {
         
         disengagementTask?.cancel()
         
-        incrementationTask = Task {
-            if status == .resting { progress = 0 }
-            else if status == .engaged { progress = 1 }
+        if status == .resting {
+            incrementationTask = Task {
+                progress = 0
+            }
+        }
+        
+        else if status == .engaged {
+            incrementationTask = Task {
+                progress = 1
+            }
         }
     }
     
@@ -109,11 +117,17 @@ private extension ConfirmationButton {
         disengagementTask = Task {
             progress = 0
             
-            try? await Task.sleep(for: .seconds(1))
+            try? await Task.sleep(for: .seconds(4))
             guard !Task.isCancelled else { return }
             
             progress = -1
         }
+    }
+    
+    func executeAction() {
+        incrementationTask?.cancel()
+        // TODO: Action
+        progress = -1
     }
     
     enum ButtonState {
