@@ -52,6 +52,36 @@ struct ConfirmationButton: View {
         .padding(.leading, 6)
         .padding(.trailing, 8)
         .frame(maxWidth: status == .resting ? nil : .infinity)
+//        .overlay {
+//            Text("hold to delete")
+//                .fixedSize()
+//                .font(.headline)
+//                .foregroundStyle(.deleteButtonLabelProgressing)
+//                .transition(.blurReplace)
+//                .mask {
+//                    Capsule()
+//                        .frame(width: fillingCapsuleWidth)
+//                }
+//        }
+        .overlay {
+            ZStack {
+                if status == .resting {
+                    Text("Delete")
+                        .font(.headline)
+                        .foregroundStyle(.deleteButtonLabel)
+                        .transition(.blurReplace)
+                } else {
+                    Text("hold to delete")
+                        .font(.headline)
+                        .foregroundStyle(.deleteButtonLabelProgressing)
+                        .transition(.blurReplace)
+                }
+            }
+            .mask {
+                Capsule()
+                    .frame(width: fillingCapsuleWidth)
+            }
+        }
         .background {
             DefaultStyleShape(.capsule)
             
@@ -61,20 +91,6 @@ struct ConfirmationButton: View {
                     .frame(width: proxy.size.width * CGFloat(progress) / 3)
                     .readWidth(into: $fillingCapsuleWidth)
                     .frame(maxWidth: .infinity)
-            }
-        }
-        .overlay {
-            ZStack {
-                if status != .resting {
-                    Text("hold to delete")
-                        .font(.headline)
-                        .foregroundStyle(.deleteButtonLabelProgressing)
-                        .transition(.blurReplace)
-                } else { Color.clear }
-            }
-            .mask {
-                Capsule()
-                    .frame(width: fillingCapsuleWidth)
             }
         }
         .contentShape(.capsule)
@@ -142,8 +158,8 @@ private extension ConfirmationButton {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1)) // TODO: Adjust initial threshold
                 guard !Task.isCancelled else { return }
+                if progress == 3 { executeAction() ; break }
                 progress += 1
-                if status == .executingAction { executeAction() ; break }
             }
         }
     }
@@ -154,16 +170,13 @@ private extension ConfirmationButton {
         incrementationTask?.cancel()
         
         disengagementTask = Task {
-            switch status {
-            case .executingAction:
+            if progress == 3 {
                 isCanceled = true
                 progress = -1
-            default:
+            } else {
                 progress = 0
-                
                 try? await Task.sleep(for: .seconds(4)) // Disengagement timeout
                 guard !Task.isCancelled else { return }
-                
                 progress = -1
             }
         }
