@@ -25,21 +25,59 @@ struct ConfirmationButton: View {
     
     @State private var buttonFrame: CGRect = .zero
     @State private var dragLocation: CGPoint = .zero
+    @State private var fillingCapsuleWidth: CGFloat = .zero
     
     var body: some View {
         HStack(spacing: 4) {
-            Text(progress == -1 ? "–" : progress.description).contentTransition(.identity) // Image(systemName: "trash.circle.fill")
-                .font(.system(size: 26, weight: .regular))
-                .foregroundStyle(.deleteButtonLabel)
-            Text("Delete")
-                .font(.headline)
-                .foregroundStyle(.deleteButtonLabel)
+            if status == .resting {
+                Image(systemName: "trash.circle.fill")
+                    .font(.system(size: 26, weight: .regular))
+                    .foregroundStyle(.deleteButtonLabel)
+                    .transition(.blurReplace)
+            }
+            
+            if status == .resting {
+                Text("Delete")
+                    .font(.headline)
+                    .foregroundStyle(.deleteButtonLabel)
+                    .transition(.blurReplace)
+            } else {
+                Text("hold to delete")
+                    .font(.headline)
+                    .foregroundStyle(.deleteButtonLabel)
+                    .transition(.blurReplace)
+            }
         }
         .frame(height: 44)
         .padding(.leading, 6)
         .padding(.trailing, 8)
         .frame(maxWidth: status == .resting ? nil : .infinity)
-        .background { DefaultStyleShape(.capsule) }
+        .background {
+            DefaultStyleShape(.capsule)
+            
+            GeometryReader { proxy in
+                Capsule()
+                    .foregroundStyle(.deleteButtonLabel)
+                    .frame(width: proxy.size.width * CGFloat(progress) / 3)
+                    .readWidth(into: $fillingCapsuleWidth)
+                    .frame(maxWidth: .infinity)
+            }
+        }
+        .overlay {
+            ZStack {
+                if status != .resting {
+                    Text("hold to delete")
+                        .font(.headline)
+                        .foregroundStyle(.deleteButtonLabelProgressing)
+                        .transition(.blurReplace)
+                } else { Color.clear }
+            }
+            .mask {
+                Capsule()
+                    .frame(width: fillingCapsuleWidth)
+            }
+        }
+        .contentShape(.capsule)
         .allowsHitTesting(!isHolding)
         .onGeometryChange(for: CGRect.self) { proxy in
             proxy.frame(in: .global)
@@ -67,7 +105,7 @@ struct ConfirmationButton: View {
                     if deltaX > 0 || deltaY > 0 {
                         if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) {
                             isCanceled = true
-                            AudioServicesPlaySystemSound(1075)
+                            AudioServicesPlaySystemSound(1104)
                         }
                     }
                     
@@ -79,11 +117,12 @@ struct ConfirmationButton: View {
                     isCanceled = false
                 }
         )
-        
-        .onChange(of: [isHolding, isCanceled]) { oldValue, newValue in
-            if !isHolding || isCanceled { disengage() }
+        .onChange(of: [isHolding, isCanceled]) {
             if isHolding && !isCanceled { engage() }
+            if !isHolding || isCanceled { disengage() }
         }
+        .animation(.smooth, value: fillingCapsuleWidth)
+        .animation(.smooth, value: progress)
         .animation(.smooth, value: status)
         .animation(.smooth, value: isHolding)
         .animation(.smooth, value: isCanceled)
@@ -97,15 +136,14 @@ private extension ConfirmationButton {
         
         disengagementTask?.cancel()
         
-        if status == .resting {
-            incrementationTask = Task {
-                progress = 0
-            }
-        }
+        if status == .resting { progress = 0 }
         
-        else if status == .engaged {
-            incrementationTask = Task {
-                progress = 1
+        incrementationTask = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1)) // TODO: Adjust initial threshold
+                guard !Task.isCancelled else { return }
+                progress += 1
+                if status == .executingAction { executeAction() ; break }
             }
         }
     }
@@ -116,19 +154,25 @@ private extension ConfirmationButton {
         incrementationTask?.cancel()
         
         disengagementTask = Task {
-            progress = 0
-            
-            try? await Task.sleep(for: .seconds(4))
-            guard !Task.isCancelled else { return }
-            
-            progress = -1
+            switch status {
+            case .executingAction:
+                isCanceled = true
+                progress = -1
+            default:
+                progress = 0
+                
+                try? await Task.sleep(for: .seconds(4)) // Disengagement timeout
+                guard !Task.isCancelled else { return }
+                
+                progress = -1
+            }
         }
     }
     
     func executeAction() {
-        incrementationTask?.cancel()
-        // TODO: Action
-        progress = -1
+        disengage()
+        action()
+        AudioServicesPlaySystemSound(1111)
     }
     
     enum ButtonState {
