@@ -158,34 +158,31 @@ private extension ConfirmationButton {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1)) // TODO: Adjust initial threshold
                 guard !Task.isCancelled else { return }
-                if progress == 3 { executeAction() ; break }
+                if progress == 3 { disengage(shouldExecuteAction: true) ; break }
                 progress += 1
             }
         }
     }
     
-    func disengage() {
+    func disengage(shouldExecuteAction: Bool = false) {
         guard disengagementTask?.isCancelled ?? true else { return }
         
         incrementationTask?.cancel()
         
-        disengagementTask = Task {
-            if progress == 3 {
-                isCanceled = true
+        if shouldExecuteAction {
+            disengagementTask = Task {
+                AudioServicesPlaySystemSound(1111)
                 progress = -1
-            } else {
+                action()
+            }
+        } else {
+            disengagementTask = Task {
                 progress = 0
                 try? await Task.sleep(for: .seconds(4)) // Disengagement timeout
                 guard !Task.isCancelled else { return }
                 progress = -1
             }
         }
-    }
-    
-    func executeAction() {
-        disengage()
-        action()
-        AudioServicesPlaySystemSound(1111)
     }
     
     enum ButtonState {
