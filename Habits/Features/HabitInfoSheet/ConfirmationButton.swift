@@ -152,11 +152,9 @@ private extension ConfirmationButton {
         
         disengagementTask?.cancel()
         
-        if status == .resting { progress = 0 }
-        
         incrementationTask = Task {
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(1)) // TODO: Adjust initial threshold
+                try? await Task.sleep(for: .seconds(status == .resting ? 0.085 : (status == .engaged ? 0 : 1)))
                 guard !Task.isCancelled else { return }
                 if progress == 3 { disengage(shouldExecuteAction: true) ; break }
                 progress += 1
