@@ -62,7 +62,7 @@ struct HabitInfoSheet: View {
                 inputControls()
                 
                 if let habit {
-                    HabitDeleteButton(habit) {
+                    ConfirmationButton {
                         DataManager.shared.delete(habit)
                         SheetManager.shared.dismiss()
                     }
