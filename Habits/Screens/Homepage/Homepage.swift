@@ -52,3 +52,8 @@ struct Homepage: View {
         }
     }
 }
+
+#Preview {
+    Homepage()
+        .modelContainer(DataManager.shared.container)
+}
