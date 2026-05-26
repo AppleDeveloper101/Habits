@@ -29,7 +29,7 @@ struct HabitInfoSheet: View {
                 if let habit {
                     ConfirmationButton {
                         DataManager.shared.delete(habit)
-                        SheetManager.shared.dismiss()
+                        ModalManager.shared.dismiss()
                     }
                 }
             }
@@ -51,7 +51,7 @@ struct HabitInfoSheet: View {
     
     private func cancelButton() -> some View {
         Button {
-            SheetManager.shared.dismiss()
+            ModalManager.shared.dismiss()
         } label: {
             Circle()
                 .frame(height: 44)
@@ -81,7 +81,7 @@ struct HabitInfoSheet: View {
             } else {
                 DataManager.shared.insert(Habit(emoji: emoji, title: title))
             }
-            SheetManager.shared.dismiss()
+            ModalManager.shared.dismiss()
         } label: {
             Circle()
                 .frame(height: 44)
