@@ -42,8 +42,6 @@ struct Homepage: View {
         }
     }
     
-    // TODO: Disable when sheet is presented
-    
     func newHabitButton() -> some View {
         Button {
             SheetManager.shared.present(.habitInfoSheet())
@@ -62,4 +60,9 @@ struct Homepage: View {
             }
         }
     }
+}
+
+#Preview {
+    Homepage()
+        .modelContainer(DataManager.shared.container)
 }

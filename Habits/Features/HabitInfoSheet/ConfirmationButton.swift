@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import AudioToolbox // MARK: DB
 
 struct ConfirmationButton: View {
     
@@ -52,17 +51,6 @@ struct ConfirmationButton: View {
         .padding(.leading, 6)
         .padding(.trailing, 8)
         .frame(maxWidth: status == .resting ? nil : .infinity)
-//        .overlay {
-//            Text("hold to delete")
-//                .fixedSize()
-//                .font(.headline)
-//                .foregroundStyle(.deleteButtonLabelProgressing)
-//                .transition(.blurReplace)
-//                .mask {
-//                    Capsule()
-//                        .frame(width: fillingCapsuleWidth)
-//                }
-//        }
         .overlay {
             ZStack {
                 if status == .resting {
@@ -105,7 +93,6 @@ struct ConfirmationButton: View {
             
             if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) && isHolding {
                 isCanceled = true
-                AudioServicesPlaySystemSound(1100)
             }
         }
         .gesture(
@@ -121,7 +108,6 @@ struct ConfirmationButton: View {
                     if deltaX > 0 || deltaY > 0 {
                         if !buttonFrame.insetBy(dx: -22, dy: -22).contains(dragLocation) {
                             isCanceled = true
-                            AudioServicesPlaySystemSound(1104)
                         }
                     }
                     
@@ -169,7 +155,6 @@ private extension ConfirmationButton {
         
         if shouldExecuteAction {
             disengagementTask = Task {
-                AudioServicesPlaySystemSound(1111)
                 progress = -1
                 action()
             }
