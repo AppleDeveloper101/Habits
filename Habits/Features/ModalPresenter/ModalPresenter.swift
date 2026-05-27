@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftData // MARK: D?
 
 struct ModalPresenter: ViewModifier {
     
@@ -39,37 +38,44 @@ struct ModalPresenter: ViewModifier {
     func body(content: Content) -> some View {
         content
             .blur(radius: blurRadius)
+            .allowsHitTesting(!manager.isPresented && !manager.isInteractionBlocked)
             .overlay {
                 ZStack(alignment: .bottom) {
-                    /// Transparent gesture recognition area
                     Color.background.opacity(1e-16)
                         .allowsHitTesting(manager.isPresented)
-                        .onTapGesture { manager.dismiss() }
+                        .onTapGesture { ModalManager.shared.dismiss() }
                     
-                    /// Sheet's content
-                    ModalManager.shared.view()
-                        .id(manager.presentedHabit?.persistentModelID)
-                        .transition(.identity)
-                        .contentTransition(.identity)
-                        .readHeight(into: $sheetContentHeight)
-                        .frame(maxWidth: .infinity, maxHeight: sheetContentHeight)
-                        .modify { view in
-                            if #available(iOS 26.0, *) {
-                                view.glassEffect(.regular.interactive(), in: sheetShape)
-                            } else {
-                                view.background(.sheetBackground, in: sheetShape)
-                            }
+                    ZStack(alignment: .top) {
+                        switch manager.currentContent {
+                        case .newHabitSheet:
+                            HabitInfoSheet()
+                                .transition(.identity)
+                        case .habitInfoSheet(let habit):
+                            HabitInfoSheet(habit)
+                                .transition(.identity)
                         }
-                        .padding([.leading, .trailing, .bottom], sheetPadding)
-                        .shadow(color: .black.opacity(0.06), radius: 8)
-                        .contentShape(sheetShape)
-                        .geometryGroup()
-                        .offset(y: offsetY)
+                    }
+                    .id(manager.presentationID)
+                    .frame(maxWidth: .infinity)
+                    .readHeight(into: $sheetContentHeight)
+                    .frame(maxHeight: sheetContentHeight, alignment: .bottom)
+                    .modify { view in
+                        if #available(iOS 26.0, *) {
+                            view.glassEffect(.regular.interactive(), in: sheetShape)
+                        } else {
+                            view.background(.sheetBackground, in: sheetShape)
+                        }
+                    }
+                    .padding([.leading, .trailing, .bottom], sheetPadding)
+                    .shadow(color: .black.opacity(0.06), radius: 8)
+                    .contentShape(sheetShape)
+                    .geometryGroup()
+                    .offset(y: offsetY)
                 }
-                .ignoresSafeArea(.container, edges: .bottom)
             }
-            .animation(.smooth, value: offsetY)
-            .animation(.smooth, value: blurRadius)
+            .ignoresSafeArea(.container, edges: .bottom)
+            .animation(nil, value: sheetContentHeight)
+            .animation(.snappy(duration: 0.3), value: offsetY)
     }
 }
 
@@ -82,18 +88,45 @@ struct ModalPresenter: ViewModifier {
     private init() {}
     
     var isPresented = false
-    var presentedHabit: Habit?
+    var isInteractionBlocked = false
+    var currentContent: ModalContent = .newHabitSheet
+    var presentationID = UUID()
     
     func present(_ habit: Habit? = nil) {
-        presentedHabit = habit
-        isPresented = true
+        guard !isInteractionBlocked else { return }
+        
+        if let habit {
+            currentContent = .habitInfoSheet(habit)
+        } else {
+            currentContent = .newHabitSheet
+        }
+        
+        presentationID = UUID()
+        
+        Task {
+            isInteractionBlocked = true
+            isPresented = true
+            try? await Task.sleep(for: .seconds(0.3))
+            isInteractionBlocked = false
+        }
+        
     }
     
     func dismiss() {
-        isPresented = false
+        guard !isInteractionBlocked else { return }
+        
+        Task {
+            isInteractionBlocked = true
+            isPresented = false
+            try? await Task.sleep(for: .seconds(0.3))
+            isInteractionBlocked = false
+        }
     }
-    
-    @ViewBuilder func view() -> some View {
-        HabitInfoSheet(presentedHabit)
+}
+
+extension ModalManager {
+    enum ModalContent: Equatable {
+        case newHabitSheet
+        case habitInfoSheet(_ habit: Habit)
     }
 }
