@@ -75,7 +75,7 @@ struct ModalPresenter: ViewModifier {
             }
             .ignoresSafeArea(.container, edges: .bottom)
             .animation(nil, value: sheetContentHeight)
-            .animation(.snappy(duration: 0.3), value: offsetY)
+            .animation(.smooth(duration: 0.35), value: offsetY)
     }
 }
 
@@ -116,6 +116,7 @@ struct ModalPresenter: ViewModifier {
         guard !isInteractionBlocked else { return }
         
         Task {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             isInteractionBlocked = true
             isPresented = false
             try? await Task.sleep(for: .seconds(0.3))
