@@ -11,6 +11,7 @@ struct ModalPresenter: ViewModifier {
     
     private let manager = ModalManager.shared
     
+    @State private var isKeyboardPresented = false
     @State private var sheetContentHeight: CGFloat = 0
     private var offsetY: CGFloat { manager.isPresented ? .zero : sheetContentHeight + sheetPadding }
     
@@ -22,7 +23,7 @@ struct ModalPresenter: ViewModifier {
     private var sheetBottomEdgeCornerRadius: CGFloat {
         CGFloat.displayCornerRadius == 0
         ? sheetTopEdgeCornerRadius
-        : .displayCornerRadius - sheetPadding
+        : isKeyboardPresented ? sheetTopEdgeCornerRadius : (.displayCornerRadius - sheetPadding)
     }
     
     private var sheetShape: UnevenRoundedRectangle {
@@ -39,7 +40,7 @@ struct ModalPresenter: ViewModifier {
         content
             .blur(radius: blurRadius)
             .allowsHitTesting(!manager.isPresented && !manager.isInteractionBlocked)
-            .overlay {
+            .safeAreaInset(edge: .bottom) {
                 ZStack(alignment: .bottom) {
                     Color.background.opacity(1e-16)
                         .allowsHitTesting(manager.isPresented)
@@ -58,7 +59,7 @@ struct ModalPresenter: ViewModifier {
                     .id(manager.presentationID)
                     .frame(maxWidth: .infinity)
                     .readHeight(into: $sheetContentHeight)
-                    .frame(maxHeight: sheetContentHeight, alignment: .bottom)
+                    .frame(height: sheetContentHeight, alignment: .top)
                     .modify { view in
                         if #available(iOS 26.0, *) {
                             view.glassEffect(.regular.interactive(), in: sheetShape)
@@ -76,6 +77,8 @@ struct ModalPresenter: ViewModifier {
             .ignoresSafeArea(.container, edges: .bottom)
             .animation(nil, value: sheetContentHeight)
             .animation(.smooth(duration: 0.35), value: offsetY)
+            .animation(.smooth(duration: 0.3), value: sheetBottomEdgeCornerRadius)
+            .receiveKeyboardPresentationState($isKeyboardPresented)
     }
 }
 
