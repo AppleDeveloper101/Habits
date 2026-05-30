@@ -8,38 +8,44 @@
 import SwiftUI
 
 extension InsettableShape {
-    func applyDefaultStyling(isElevated: Bool = false) -> some View {
+    func applyDefaultStyling(hasStroke: Bool = true, isElevated: Bool = false) -> some View {
         self
             .fill(isElevated ? .shapeElevated : .shape)
             .overlay {
-                StrokeBorderShapeView(
-                    shape: self,
-                    style: .shapeStroke,
-                    strokeStyle: .init(lineWidth: 1),
-                    isAntialiased: true,
-                    background: Color.clear
-                )
+                if hasStroke {
+                    StrokeBorderShapeView(
+                        shape: self,
+                        style: .shapeStroke,
+                        strokeStyle: .init(lineWidth: 1),
+                        isAntialiased: true,
+                        background: Color.clear
+                    )
+                }
             }
             .shadow(color: .shapeShadow, radius: 14, y: 4)
     }
 }
 
 extension View {
-    func defaultStyleShape<S: InsettableShape>(_ shape: S, isElevated: Bool = false) -> some View {
-        shape.applyDefaultStyling(isElevated: isElevated)
+    func defaultStyleShape<S: InsettableShape>(_ shape: S, hasStroke: Bool = true, isElevated: Bool = false) -> some View {
+        shape.applyDefaultStyling(hasStroke: hasStroke, isElevated: isElevated)
     }
 }
 
 struct DefaultStyleShape<S: InsettableShape>: View {
     
     private let shape: S
+    private let hasStroke: Bool
+    private let isElevated: Bool
     
-    init(_ shape: S) {
+    init(_ shape: S, hasStroke: Bool = true, isElevated: Bool = false) {
         self.shape = shape
+        self.hasStroke = hasStroke
+        self.isElevated = isElevated
     }
     
     var body: some View {
-        shape.applyDefaultStyling()
+        shape.applyDefaultStyling(hasStroke: hasStroke, isElevated: isElevated)
     }
 }
 
