@@ -14,6 +14,10 @@ struct HabitInfoSheet: View {
     @State private var emoji: String
     @State private var title: String
     
+    private var formattedTitle: String {
+        title.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
     init(_ habit: Habit? = nil) {
         self.habit = habit
         self.emoji = habit?.emoji ?? ""
@@ -77,9 +81,9 @@ struct HabitInfoSheet: View {
         Button {
             if let habit {
                 habit.emoji = emoji
-                habit.title = title
+                habit.title = formattedTitle
             } else {
-                DataManager.shared.insert(Habit(emoji: emoji, title: title))
+                DataManager.shared.insert(Habit(emoji: emoji, title: formattedTitle))
             }
             ModalManager.shared.dismiss()
         } label: {
