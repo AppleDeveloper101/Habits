@@ -21,8 +21,9 @@ struct HabitCard: View {
     }
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 12) {
             header()
+            WeekRowStats(habit: habit)
         }
         .padding(12)
         .background(defaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
