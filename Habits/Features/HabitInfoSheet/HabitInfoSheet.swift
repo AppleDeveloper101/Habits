@@ -76,9 +76,11 @@ struct HabitInfoSheet: View {
         }
     }
     
-    // TODO: Disable when title is empty
-    private func confirmButton() -> some View {
+    @ViewBuilder private func confirmButton() -> some View {
+        var isEnabled: Bool { !formattedTitle.isEmpty }
+        
         Button {
+            guard isEnabled else { return }
             if let habit {
                 habit.emoji = emoji
                 habit.title = formattedTitle
@@ -89,7 +91,7 @@ struct HabitInfoSheet: View {
         } label: {
             Circle()
                 .frame(height: 44)
-                .tint(.accent)
+                .tint(isEnabled ? .accent : .confirmationButtonDisabled)
                 .overlay {
                     Image(systemName: "checkmark")
                         .tint(.sheetBackground)
@@ -98,12 +100,13 @@ struct HabitInfoSheet: View {
                 .modify { view in
                     if #available(iOS 26.0, *) {
                         view
-                            .glassEffect(.regular.interactive())
+                            .glassEffect(.regular.interactive(isEnabled))
                     } else {
                         view
                     }
                 }
         }
+        .allowsHitTesting(isEnabled)
     }
     
     private func inputControls() -> some View {
