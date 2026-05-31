@@ -21,6 +21,7 @@ struct EmojiPicker: View {
             .frame(width: 44, height: 44)
             .overlay(content: overlayContent)
             .onChange(of: emoji, updateEmoji)
+            .contentShape(.circle)
             .onTapGesture(perform: managePickerState)
     }
     
