@@ -107,6 +107,7 @@ struct HabitInfoSheet: View {
                 }
         }
         .allowsHitTesting(isEnabled)
+        .animation(.smooth(duration: 0.3), value: isEnabled)
     }
     
     private func inputControls() -> some View {
@@ -119,12 +120,14 @@ struct HabitInfoSheet: View {
 
 #Preview {
     @Previewable @State var isPresented = true
+    let habit = Habit(emoji: "🥖", title: "Baguette")
     
     Color.background.ignoresSafeArea()
-        .sheet(isPresented: $isPresented) {
-            HabitInfoSheet(.init(emoji: "🥖", title: "Baguette"))
+        .modalPresenter()
+        .task {
+            ModalManager.shared.present(habit)
         }
         .onTapGesture {
-            isPresented = true
+            ModalManager.shared.present(habit)
         }
 }
