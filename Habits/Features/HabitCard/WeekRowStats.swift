@@ -12,28 +12,20 @@ struct WeekRowStats: View {
     
     @Query private var records: [Record]
     
-    private let habit: Habit
-    
     @State private var markWidth: CGFloat = .zero
     @State private var calculatedCornerRadius: CGFloat = .zero
     
     private let cornerRadiusMultiplier = 0.34375
     
-    private let lastWeekday = (Calendar.current.firstWeekday - 1 + 7) % 7
-    
-    private var components: DateComponents {
-        DateComponents(weekday: lastWeekday)
-    }
-    
-    private var lastWeekdayDate: Date {
-        Calendar.current.nextDate(after: .now, matching: components, matchingPolicy: .nextTime)!
-    }
+    private let calendar = Calendar.current
     
     private var datesRange: [Date] {
         var dates: [Date] = []
+        let startOfCurrentWeek = calendar.dateInterval(of: .weekOfYear, for: .now)!.start
+        let weekRowLastDate = calendar.date(byAdding: .day, value: 6, to: startOfCurrentWeek)!
         
         (0..<10).reversed().forEach { index in
-            let dateToAdd = Calendar.current.date(byAdding: .day, value: -index, to: lastWeekdayDate)!
+            let dateToAdd = calendar.date(byAdding: .day, value: -index, to: weekRowLastDate)!
             dates.append(dateToAdd)
         }
         
@@ -41,12 +33,10 @@ struct WeekRowStats: View {
     }
     
     init(habit: Habit) {
-        self.habit = habit
-        
         let fetchedRecordsHabitID = habit.persistentModelID
         
-        let predicate = #Predicate<Record> { record in
-            record.habit?.persistentModelID == fetchedRecordsHabitID
+        let predicate = #Predicate<Record> {
+            $0.habit?.persistentModelID == fetchedRecordsHabitID
         }
         
         self._records = Query(filter: predicate, sort: \.timestamp)
@@ -56,8 +46,8 @@ struct WeekRowStats: View {
         HStack(spacing: 8) {
             ForEach(Array(datesRange.enumerated()), id: \.offset) { index, date in
                 WeekRowCell(
-                    hasRecord: records.contains { Calendar.current.isDate($0.timestamp, equalTo: date, toGranularity: .day) },
-                    isToday: Calendar.current.isDate(date, equalTo: .now, toGranularity: .day),
+                    hasRecord: records.contains { calendar.isDate($0.timestamp, equalTo: date, toGranularity: .day) },
+                    isToday: calendar.isDate(date, equalTo: .now, toGranularity: .day),
                     symbol: date.formatted(.dateTime.weekday(.narrow))
                 )
                 if index == 2 { separatorColumn() }
