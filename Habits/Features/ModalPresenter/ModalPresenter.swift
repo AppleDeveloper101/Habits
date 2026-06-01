@@ -64,7 +64,12 @@ struct ModalPresenter: ViewModifier {
                         if #available(iOS 26.0, *) {
                             view.glassEffect(.regular.interactive(), in: sheetShape)
                         } else {
-                            view.background(.sheetBackground, in: sheetShape)
+                            view
+                                .background(
+                                    sheetShape
+                                        .fill(.sheetBackground)
+                                        .strokeBorder(.sheetStroke, style: .init(lineWidth: 1))
+                                )
                         }
                     }
                     .padding([.leading, .trailing, .bottom], sheetPadding)
