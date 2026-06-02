@@ -19,15 +19,19 @@ struct Homepage: View {
                     VStack(spacing: 16) {
                         ForEach(habits) {
                             HabitCard($0)
+                                .padding([.leading, .trailing], 16)
+                                .transition(.asymmetric(insertion: .identity, removal: .move(edge: .trailing)))
                         }
                     }
-                    .padding([.leading, .trailing, .top], 16)
+                    .padding([.top, .bottom], 16)
                 }
             }
             .navigationTitle("Habits")
             .scrollIndicators(.hidden)
             .background(Color.background)
             .toolbar(content: newHabitButton)
+            .animation(.snappy, value: habits)
+            .ignoresSafeArea(.all, edges: .bottom)
             .toolbarTitleDisplayMode(.inlineLarge)
         }
         .modalPresenter()
