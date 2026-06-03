@@ -35,15 +35,14 @@ struct HabitCard: View {
         HStack {
             HStack(spacing: 4) {
                 Text(habit.emoji.isEmpty ? "🎯" : habit.emoji)
-                    .brightness(
-                        colorScheme == .light
-                        ? 0
-                        : habit.emoji.isEmpty ? 0 : -0.14
-                    )
+                    .font(.system(size: 34, weight: .regular))
+                    .frame(width: 38, height: 38)
                     .saturation(habit.emoji.isEmpty ? 0 : 1)
                     .contrast(habit.emoji.isEmpty ? 1.17 : 1)
-                    .frame(width: 38, height: 38)
-                    .font(.system(size: 34, weight: .regular))
+                    .brightness(
+                        colorScheme == .light ? 0
+                        : habit.emoji.isEmpty ? 0 : -0.14
+                    )
                 Text(title)
                     .font(.headline)
                     .contentTransition(.numericText())
