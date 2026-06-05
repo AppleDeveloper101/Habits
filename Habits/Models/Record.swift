@@ -14,9 +14,10 @@ import SwiftData
     var timestamp: Date
     
     init(
-        habit: Habit
+        habit: Habit,
+        timestamp: Date = .now
     ) {
         self.habit = habit
-        self.timestamp = .now
+        self.timestamp = timestamp
     }
 }
