@@ -5,6 +5,7 @@
 //  Created by Andrey on 30/04/2026.
 //
 
+import Foundation
 import SwiftData
 
 final class DataManager {
@@ -25,5 +26,18 @@ final class DataManager {
     
     func delete( _ model: any PersistentModel) {
         context.delete(model)
+    }
+    
+    func toggleRecord(for habit: Habit, on date: Date) {
+        let calendar = Calendar.current
+        
+        guard let recordToDelete = habit.records.first(where: { record in
+            calendar.isDate(record.timestamp, inSameDayAs: date)
+        }) else {
+            insert(Record(habit: habit, timestamp: date))
+            return
+        }
+        
+        delete(recordToDelete)
     }
 }
