@@ -28,7 +28,7 @@ struct HabitCard: View {
         .padding(12)
         .background(defaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
         .contentShape(RoundedRectangle(cornerRadius: 24).inset(by: 12))
-        .onTapGesture { ModalManager.shared.present(habit) }
+        .onTapGesture { ModalManager.shared.present(.habitInfoSheet(habit)) }
     }
     
     private func header() -> some View {

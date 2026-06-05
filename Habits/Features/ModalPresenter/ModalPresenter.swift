@@ -54,8 +54,12 @@ struct ModalPresenter: ViewModifier {
                         case .habitInfoSheet(let habit):
                             HabitInfoSheet(habit)
                                 .transition(.identity)
+                        case .habitCalendarSheet(let habit, let date):
+                            HabitCalendarSheet(habit: habit, date: date)
+                                .transition(.identity)
                         }
                     }
+                    .clipShape(sheetShape)
                     .id(manager.presentationID)
                     .frame(maxWidth: .infinity)
                     .readHeight(into: $sheetContentHeight)

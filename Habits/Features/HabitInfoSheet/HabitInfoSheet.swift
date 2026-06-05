@@ -119,15 +119,14 @@ struct HabitInfoSheet: View {
 }
 
 #Preview {
-    @Previewable @State var isPresented = true
     let habit = Habit(emoji: "🥖", title: "Baguette")
     
     Color.background.ignoresSafeArea()
         .modalPresenter()
         .task {
-            ModalManager.shared.present(habit)
+            ModalManager.shared.present(.habitInfoSheet(habit))
         }
         .onTapGesture {
-            ModalManager.shared.present(habit)
+            ModalManager.shared.present(.habitInfoSheet(habit))
         }
 }

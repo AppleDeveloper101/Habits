@@ -11,6 +11,7 @@ import SwiftData
 struct WeekRowStats: View {
     
     @Query private var records: [Record]
+    private let habit: Habit
     
     @State private var markWidth: CGFloat = .zero
     @State private var calculatedCornerRadius: CGFloat = .zero
@@ -33,6 +34,8 @@ struct WeekRowStats: View {
     }
     
     init(habit: Habit) {
+        self.habit = habit
+        
         let fetchedRecordsHabitID = habit.persistentModelID
         
         let predicate = #Predicate<Record> {
@@ -52,6 +55,10 @@ struct WeekRowStats: View {
                 )
                 if index == 2 { separatorColumn() }
             }
+        }
+        .contentShape(.rect)
+        .onTapGesture {
+            ModalManager.shared.present(.habitCalendarSheet(habit, .now))
         }
     }
     

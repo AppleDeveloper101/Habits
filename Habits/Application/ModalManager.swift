@@ -18,13 +18,16 @@ import SwiftUI
     var currentContent: ModalContent = .newHabitSheet
     var presentationID = UUID()
     
-    func present(_ habit: Habit? = nil) {
+    func present(_ modal: ModalContent) {
         guard !isInteractionBlocked else { return }
         
-        if let habit {
-            currentContent = .habitInfoSheet(habit)
-        } else {
+        switch modal {
+        case .newHabitSheet:
             currentContent = .newHabitSheet
+        case .habitInfoSheet(let habit):
+            currentContent = .habitInfoSheet(habit)
+        case .habitCalendarSheet(let habit, let date):
+            currentContent = .habitCalendarSheet(habit, date)
         }
         
         presentationID = UUID()
@@ -35,7 +38,6 @@ import SwiftUI
             try? await Task.sleep(for: .seconds(0.3))
             isInteractionBlocked = false
         }
-        
     }
     
     func dismiss() {
@@ -55,5 +57,6 @@ extension ModalManager {
     enum ModalContent: Equatable {
         case newHabitSheet
         case habitInfoSheet(_ habit: Habit)
+        case habitCalendarSheet(_ habit: Habit, _ date: Date)
     }
 }

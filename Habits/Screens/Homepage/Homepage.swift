@@ -39,7 +39,7 @@ struct Homepage: View {
     
     func newHabitButton() -> some View {
         Button {
-            ModalManager.shared.present() // TODO: New habit form
+            ModalManager.shared.present(.newHabitSheet)
         } label: {
             Image(systemName: "plus")
                 .font(.system(size: 18, weight: .medium))
