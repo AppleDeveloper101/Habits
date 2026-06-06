@@ -18,9 +18,8 @@ import SwiftUI
     var currentContent: ModalContent = .newHabitSheet
     var presentationID = UUID()
     
-    let modalAnimationTime = 0.35
-    var blurAnimationTime: Double { isPresented ? modalAnimationTime + 0.4 : modalAnimationTime + 0.1 }
-    var interactionBlockingTime: Double { modalAnimationTime + 0.1 }
+    var modalAnimationTime: Double { isPresented ? 0.5 : 0.6 }
+    var interactionBlockingTime: Double { modalAnimationTime }
     
     func present(_ modal: ModalContent) {
         guard !isInteractionBlocked else { return }
@@ -38,9 +37,7 @@ import SwiftUI
         
         Task {
             isInteractionBlocked = true
-            withAnimation(.snappy(duration: modalAnimationTime)) {
-                isPresented = true
-            }
+            isPresented = true
             try? await Task.sleep(for: .seconds(interactionBlockingTime))
             isInteractionBlocked = false
         }
@@ -52,9 +49,7 @@ import SwiftUI
         Task {
             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             isInteractionBlocked = true
-            withAnimation(.snappy(duration: modalAnimationTime)) {
-                isPresented = false
-            }
+            isPresented = false
             try? await Task.sleep(for: .seconds(interactionBlockingTime))
             isInteractionBlocked = false
         }

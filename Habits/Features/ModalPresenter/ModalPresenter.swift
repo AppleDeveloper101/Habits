@@ -39,53 +39,55 @@ struct ModalPresenter: ViewModifier {
     func body(content: Content) -> some View {
         content
             .blur(radius: blurRadius)
-            .animation(.smooth(duration: manager.blurAnimationTime), value: blurRadius)
+            .animation(.smooth(duration: manager.isPresented ? 0.6 : 0.4), value: blurRadius)
             .allowsHitTesting(!manager.isPresented && !manager.isInteractionBlocked)
             .safeAreaInset(edge: .bottom) {
-                ZStack(alignment: .bottom) {
-                    Color.background.opacity(1e-16)
-                        .allowsHitTesting(manager.isPresented)
-                        .onTapGesture { ModalManager.shared.dismiss() }
-                    
-                    ZStack(alignment: .top) {
-                        switch manager.currentContent {
-                        case .newHabitSheet:
-                            HabitInfoSheet()
-                                .transition(.identity)
-                        case .habitInfoSheet(let habit):
-                            HabitInfoSheet(habit)
-                                .transition(.identity)
-                        case .habitCalendarSheet(let habit, let date):
-                            HabitCalendarSheet(habit: habit, date: date)
-                                .transition(.identity)
+                if manager.isPresented {
+                    ZStack(alignment: .bottom) {
+                        Color.background.opacity(1e-16)
+                            .allowsHitTesting(manager.isPresented)
+                            .onTapGesture { ModalManager.shared.dismiss() }
+                        
+                        ZStack(alignment: .top) {
+                            switch manager.currentContent {
+                            case .newHabitSheet:
+                                HabitInfoSheet()
+                            case .habitInfoSheet(let habit):
+                                HabitInfoSheet(habit)
+                            case .habitCalendarSheet(let habit, let date):
+                                HabitCalendarSheet(habit: habit, date: date)
+                            }
                         }
-                    }
-                    .clipShape(sheetShape)
-                    .id(manager.presentationID)
-                    .frame(maxWidth: .infinity)
-                    .readHeight(into: $sheetContentHeight)
-                    .frame(height: sheetContentHeight, alignment: .top)
-                    .modify { view in
-                        if #available(iOS 26.0, *) {
-                            view.glassEffect(.regular.interactive(), in: sheetShape)
-                        } else {
-                            view
-                                .background(
-                                    sheetShape
-                                        .fill(.sheetBackground)
-                                        .strokeBorder(.sheetStroke, style: .init(lineWidth: 1))
-                                )
+                        .transition(.identity)
+                        .clipShape(sheetShape)
+                        .id(manager.presentationID)
+                        .frame(maxWidth: .infinity)
+                        .readHeight(into: $sheetContentHeight)
+                        .frame(height: sheetContentHeight, alignment: .top)
+                        .modify { view in
+                            if #available(iOS 26.0, *) {
+                                view.glassEffect(.regular.interactive(), in: sheetShape)
+                            } else {
+                                view
+                                    .background(
+                                        sheetShape
+                                            .fill(.sheetBackground)
+                                            .strokeBorder(.sheetStroke, style: .init(lineWidth: 1))
+                                    )
+                            }
                         }
+                        .padding([.leading, .trailing, .bottom], sheetPadding)
+                        .shadow(color: .black.opacity(0.06), radius: 8)
+                        .contentShape(sheetShape)
+                        .geometryGroup()
                     }
-                    .padding([.leading, .trailing, .bottom], sheetPadding)
-                    .shadow(color: .black.opacity(0.06), radius: 8)
-                    .contentShape(sheetShape)
-                    .geometryGroup()
-                    .offset(y: offsetY)
+                    .transition(.move(edge: .bottom))
                 }
             }
             .ignoresSafeArea(.container, edges: .bottom)
-            .animation(nil, value: sheetContentHeight)
             .receiveKeyboardPresentationState($isKeyboardPresented)
+            .animation(.none, value: manager.currentContent)
+            .animation(.smooth(duration: 0.4), value: sheetBottomEdgeCornerRadius)
+            .animation(.snappy(duration: manager.modalAnimationTime), value: manager.isPresented)
     }
 }
