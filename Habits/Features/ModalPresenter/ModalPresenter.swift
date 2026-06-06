@@ -39,6 +39,7 @@ struct ModalPresenter: ViewModifier {
     func body(content: Content) -> some View {
         content
             .blur(radius: blurRadius)
+            .animation(.smooth(duration: manager.blurAnimationTime), value: blurRadius)
             .allowsHitTesting(!manager.isPresented && !manager.isInteractionBlocked)
             .safeAreaInset(edge: .bottom) {
                 ZStack(alignment: .bottom) {
@@ -85,8 +86,6 @@ struct ModalPresenter: ViewModifier {
             }
             .ignoresSafeArea(.container, edges: .bottom)
             .animation(nil, value: sheetContentHeight)
-            .animation(.smooth(duration: 0.3), value: offsetY)
-            .animation(.smooth(duration: 0.3), value: sheetBottomEdgeCornerRadius)
             .receiveKeyboardPresentationState($isKeyboardPresented)
     }
 }
