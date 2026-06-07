@@ -19,7 +19,7 @@ struct CalendarSheetHeader: View {
     
     var body: some View {
         HStack {
-            HStack(spacing: 4) {
+            HStack(spacing: 8) {
                 Text(habit.emoji.isEmpty ? "🎯" : habit.emoji)
                     .fixedSize()
                     .font(.system(size: 34, weight: .regular))

@@ -142,7 +142,7 @@ struct HabitCalendarSheet: View {
                 ForEach(weekdays, id: \.self) { symbol in
                     Text(symbol)
                         .font(.title3.bold())
-                        .foregroundStyle(.labelPrimary)
+                        .foregroundStyle(.sheetCalendarWeekdaySymbol)
                         .frame(width: 22, height: 44)
                 }
             }
@@ -159,7 +159,7 @@ struct HabitCalendarSheet: View {
             .font(.title3.bold())
             .foregroundStyle(
                 hasRecord ? .complementary
-                : isDisabled ? .accentFaded : .accent
+                : isDisabled ? .sheetCalendarGridCellDisabled : .accent
             )
             .frame(width: 44, height: 44)
             .background {
