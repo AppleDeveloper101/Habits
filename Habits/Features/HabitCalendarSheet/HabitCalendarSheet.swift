@@ -23,6 +23,8 @@ struct HabitCalendarSheet: View {
     
     private let calendar = Calendar.current
     
+    private let scrollFixPadding: CGFloat = 999_999
+    
     private var firstMonthContainingRecord: Date {
         guard let fistRecordDate = records.first?.timestamp else {
             return calendar.dateInterval(of: .month, for: habit.timestamp)!.start
@@ -69,6 +71,7 @@ struct HabitCalendarSheet: View {
             
             HStack(alignment: .bottom, spacing: .zero) {
                 weekdaysColumn()
+                    .padding(.bottom, 16)
                 
                 ScrollView(.horizontal) {
                     HStack(alignment: .bottom, spacing: .zero) {
@@ -113,7 +116,10 @@ struct HabitCalendarSheet: View {
                             .id(month)
                         }
                     }
+                    .padding(.bottom, 16)
+                    .padding(.bottom, scrollFixPadding)
                 }
+                .padding(.bottom, -scrollFixPadding)
                 .scrollClipDisabled()
                 .scrollIndicators(.hidden)
                 .scrollPosition(id: $focusedMonth, anchor: .leading)
@@ -128,7 +134,7 @@ struct HabitCalendarSheet: View {
                 .padding(.trailing, -16)
             }
         }
-        .padding(16)
+        .padding([.leading, .trailing, .top], 16)
     }
     
     @ViewBuilder private func weekdaysColumn() -> some View {
