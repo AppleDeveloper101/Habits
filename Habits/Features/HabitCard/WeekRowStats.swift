@@ -53,12 +53,12 @@ struct WeekRowStats: View {
                     isToday: calendar.isDate(date, equalTo: .now, toGranularity: .day),
                     symbol: date.formatted(.dateTime.weekday(.narrow))
                 )
+                .contentShape(.rect)
+                .onTapGesture {
+                    ModalManager.shared.present(.habitCalendarSheet(habit, date))
+                }
                 if index == 2 { separatorColumn() }
             }
-        }
-        .contentShape(.rect)
-        .onTapGesture {
-            ModalManager.shared.present(.habitCalendarSheet(habit, .now))
         }
     }
     

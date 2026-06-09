@@ -25,25 +25,29 @@ struct HabitCalendarSheet: View {
     
     private let scrollFixPadding: CGFloat = 999_999
     
-    private var firstMonthContainingRecord: Date {
-        guard let fistRecordDate = records.first?.timestamp else {
-            return calendar.dateInterval(of: .month, for: habit.timestamp)!.start
+    private var firstDisplayedMonth: Date {
+        if let firstRecordDate = records.first?.timestamp {
+            let firstRecordMonth = calendar.dateInterval(of: .month, for: firstRecordDate)!.start
+            return min(firstRecordMonth, initiallyPresentedMonth)
+        } else {
+            let habitCreationMonth = calendar.dateInterval(of: .month, for: habit.timestamp)!.start
+            return min(habitCreationMonth, initiallyPresentedMonth)
         }
-        return calendar.dateInterval(of: .month, for: fistRecordDate)!.start
     }
     
-    private var lastMonthContainingRecord: Date {
-        guard let lastRecordDate = records.last?.timestamp else {
-            return calendar.dateInterval(of: .month, for: .now)!.start
-        }
-        return calendar.dateInterval(of: .month, for: lastRecordDate)!.start
+    private var lastDisplayedMonth: Date {
+        calendar.dateInterval(of: .month, for: .now)!.start
+    }
+    
+    private var initiallyPresentedMonth: Date {
+        calendar.dateInterval(of: .month, for: date)!.start
     }
     
     private var displayedMonths: [Date] {
         var months: [Date] = []
-        var dateToAdd = firstMonthContainingRecord
+        var dateToAdd = firstDisplayedMonth
         
-        while dateToAdd <= lastMonthContainingRecord {
+        while dateToAdd <= lastDisplayedMonth {
             months.append(dateToAdd)
             dateToAdd = calendar.date(byAdding: .month, value: 1, to: dateToAdd)!
         }
@@ -123,7 +127,7 @@ struct HabitCalendarSheet: View {
                 .scrollClipDisabled()
                 .scrollIndicators(.hidden)
                 .scrollPosition(id: $focusedMonth, anchor: .leading)
-                .onAppear { focusedMonth = displayedMonths.last }
+                .onAppear { focusedMonth = initiallyPresentedMonth }
                 .mask {
                     VStack(spacing: .zero) {
                         Rectangle()
