@@ -49,20 +49,17 @@ struct WeekRowStats: View {
         HStack(spacing: 8) {
             ForEach(Array(datesRange.enumerated()), id: \.offset) { index, date in
                 WeekRowCell(
+                    date: date,
                     hasRecord: records.contains { calendar.isDate($0.timestamp, equalTo: date, toGranularity: .day) },
                     isToday: calendar.isDate(date, equalTo: .now, toGranularity: .day),
                     symbol: date.formatted(.dateTime.weekday(.narrow))
                 )
-                .contentShape(.rect)
-                .onTapGesture {
-                    ModalManager.shared.present(.habitCalendarSheet(habit, date))
-                }
                 if index == 2 { separatorColumn() }
             }
         }
     }
     
-    @ViewBuilder private func WeekRowCell(hasRecord: Bool, isToday: Bool, symbol: String) -> some View {
+    @ViewBuilder private func WeekRowCell(date: Date, hasRecord: Bool, isToday: Bool, symbol: String) -> some View {
         
         let sizeRatio: CGFloat = {
             switch (hasRecord, isToday) {
@@ -102,6 +99,11 @@ struct WeekRowStats: View {
                 .foregroundStyle(.accent)
                 .font(.system(size: 10, weight: .bold))
         }
+        .padding(.top, 12)
+        .contentShape(.rect)
+        .onTapGesture {
+            ModalManager.shared.present(.habitCalendarSheet(habit, date))
+        }
     }
     
     private func separatorColumn() -> some View {
@@ -114,5 +116,6 @@ struct WeekRowStats: View {
                 .fill(.weekRowSeparatorSecondary)
                 .frame(width: 1.5, height: 14)
         }
+        .padding(.top, 12)
     }
 }

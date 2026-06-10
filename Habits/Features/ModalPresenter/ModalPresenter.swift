@@ -44,7 +44,7 @@ struct ModalPresenter: ViewModifier {
             .safeAreaInset(edge: .bottom) {
                 if manager.isPresented {
                     ZStack(alignment: .bottom) {
-                        Color.background.opacity(1e-16)
+                        Color.clear.contentShape(.rect)
                             .allowsHitTesting(manager.isPresented)
                             .onTapGesture { ModalManager.shared.dismiss() }
                         

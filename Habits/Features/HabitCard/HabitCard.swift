@@ -21,14 +21,12 @@ struct HabitCard: View {
     }
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: .zero) {
             header()
             WeekRowStats(habit: habit)
         }
         .padding(12)
         .background(defaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
-        .contentShape(RoundedRectangle(cornerRadius: 24).inset(by: 12))
-        .onTapGesture { ModalManager.shared.present(.habitInfoSheet(habit)) }
     }
     
     private func header() -> some View {
@@ -54,6 +52,7 @@ struct HabitCard: View {
                     }
             }
             .foregroundStyle(.accent)
+            .onTapGesture { ModalManager.shared.present(.habitInfoSheet(habit)) }
             
             Spacer()
             
