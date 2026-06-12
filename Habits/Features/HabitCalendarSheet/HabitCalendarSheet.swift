@@ -164,29 +164,38 @@ struct HabitCalendarSheet: View {
         .fixedSize()
     }
     
-    private func calendarGridCell(date: Date, hasRecord: Bool, isToday: Bool, isDisabled: Bool) -> some View {
+    @ViewBuilder private func calendarGridCell(date: Date, hasRecord: Bool, isToday: Bool, isDisabled: Bool) -> some View {
+        
+        var cellFillColor: Color { hasRecord ? .accent : .clear }
+        var indicatorWidth: CGFloat { hasRecord ? 16 : 6 }
+        var indicatorHeight: CGFloat { hasRecord ? 4 : 6 }
+        var indicatorColor: Color { hasRecord ? .complementary : .accent }
+        
         Text(date.formatted(.dateTime.day(.defaultDigits)))
             .font(.title3.bold())
             .foregroundStyle(
                 hasRecord ? .complementary
                 : isDisabled ? .sheetCalendarGridCellDisabled : .accent
             )
-            .frame(width: 44, height: 44)
-            .background {
-                RoundedRectangle(cornerRadius: 44 * 0.34375)
-                    .foregroundStyle(hasRecord ? .accent : .clear)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 44 * 0.34375).strokeBorder(!hasRecord && isToday ? .accent : .clear, lineWidth: 2)
-                    }
-            }
             .overlay(alignment: .bottom) {
-                if hasRecord && isToday {
+                if isToday {
                     Capsule()
-                        .offset(y: -5)
-                        .fill(.complementary)
-                        .frame(width: 16, height: 4)
+                        .fill(indicatorColor)
+                        .frame(width: indicatorWidth, height: indicatorHeight)
+                        .animation(.spring(duration: 0.4, bounce: hasRecord ? 0.5 : 0.35), value: indicatorWidth)
+                        .offset(y: indicatorHeight + 0.5)
                 }
             }
+            .frame(width: 44, height: 44)
+            .background {
+                if hasRecord {
+                    RoundedRectangle(cornerRadius: 44 * 0.34375)
+                        .foregroundStyle(cellFillColor)
+                        .animation(.smooth(duration: 0.425), value: cellFillColor)
+                        .transition(.asymmetric(insertion: .scale, removal: .scale.combined(with: .opacity)))
+                }
+            }
+            .animation(.smooth, value: hasRecord)
             .onTapGesture {
                 guard !isDisabled else { return }
                 DataManager.shared.toggleRecord(for: habit, on: date)
