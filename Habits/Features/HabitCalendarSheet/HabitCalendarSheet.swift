@@ -186,6 +186,7 @@ struct HabitCalendarGridCell: View {
     @State private var scaleY: CGFloat = 0.0
     
     @State private var textScale: CGFloat = 1.0
+    @State private var indicatorColor: Color = .clear
     
     init(date: Date, hasRecord: Bool, isToday: Bool, isDisabled: Bool, habit: Habit) {
         self.date = date
@@ -201,7 +202,6 @@ struct HabitCalendarGridCell: View {
         let indicatorWidth: CGFloat = visualHasRecord ? 16.0 : 6.0
         let indicatorHeight: CGFloat = visualHasRecord ? 4.0 : 6.0
         let cellFillColor: Color = .accent
-        let indicatorColor: Color = isBackgroundFilled ? .complementary : .accent
         
         Text(date.formatted(.dateTime.day(.defaultDigits)))
             .fixedSize()
@@ -232,6 +232,15 @@ struct HabitCalendarGridCell: View {
                         .frame(width: indicatorWidth, height: indicatorHeight)
                         .animation(.spring(duration: 0.4, bounce: visualHasRecord ? 0.5 : 0.4), value: indicatorWidth)
                         .offset(y: indicatorHeight + 0.5)
+                        .onChange(of: isBackgroundFilled) { _, willFill in
+                            Task {
+                                try? await Task.sleep(for: .seconds(willFill ? 0.3 : 0.15))
+                                indicatorColor = willFill ? .complementary : .accent
+                            }
+                        }
+                        .onAppear {
+                            indicatorColor = isBackgroundFilled ? .complementary : .accent
+                        }
                 }
             }
             .frame(width: 44, height: 44)
