@@ -78,51 +78,7 @@ struct HabitCalendarSheet: View {
                     .padding(.bottom, 16)
                 
                 ScrollView(.horizontal) {
-                    HStack(alignment: .bottom, spacing: .zero) {
-                        ForEach(displayedMonths, id: \.self) { month in
-                            VStack(spacing: 8) {
-                                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                    Text(month.formatted(.dateTime.month(.wide)))
-                                        .font(.title.bold())
-                                        .foregroundStyle(.accent)
-                                    if !calendar.isDate(month, equalTo: .now, toGranularity: .year) {
-                                        Text(month.formatted(.dateTime.year(.defaultDigits)))
-                                            .font(.title3.bold())
-                                            .foregroundStyle(.accentFaded)
-                                    }
-                                    Spacer()
-                                }
-                                .padding(.horizontal, 16 / 2)
-                                .readHeight(into: $monthGridHeaderHeight)
-                                
-                                LazyHGrid(rows: Array(repeating: GridItem(spacing: 8), count: 7), spacing: 8) {
-                                    ForEach(0..<month.amountOfPaddingDays, id: \.self) { _ in
-                                        placeHolderCell()
-                                    }
-                                    ForEach(month.monthDaysRange, id: \.self) { dayDate in
-                                        CalendarSheetGridCell(
-                                            date: dayDate,
-                                            hasRecord: records.contains { calendar.isDate($0.timestamp, inSameDayAs: dayDate) },
-                                            isToday: calendar.isDate(dayDate, inSameDayAs: .startOfToday),
-                                            isDisabled: dayDate > .startOfToday || dayDate < calendar.startOfDay(for: habit.timestamp),
-                                            habit: habit
-                                        )
-                                    }
-                                }
-                                .fixedSize()
-                                .padding(.horizontal, 16 / 2)
-                                .containerRelativeFrame(
-                                    .horizontal,
-                                    count: month == displayedMonths.last ? 1 : 0,
-                                    spacing: .zero,
-                                    alignment: .leading,
-                                )
-                            }
-                            .id(month)
-                        }
-                    }
-                    .padding(.bottom, 16)
-                    .padding(.bottom, scrollFixPadding)
+                    scrollViewContent()
                 }
                 .padding(.bottom, -scrollFixPadding)
                 .scrollClipDisabled()
@@ -167,5 +123,53 @@ struct HabitCalendarSheet: View {
     
     private func placeHolderCell() -> some View {
         Color.clear.frame(width: 44, height: 44)
+    }
+    
+    private func scrollViewContent() -> some View {
+        HStack(alignment: .bottom, spacing: .zero) {
+            ForEach(displayedMonths, id: \.self) { month in
+                VStack(spacing: 8) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(month.formatted(.dateTime.month(.wide)))
+                            .font(.title.bold())
+                            .foregroundStyle(.accent)
+                        if !calendar.isDate(month, equalTo: .now, toGranularity: .year) {
+                            Text(month.formatted(.dateTime.year(.defaultDigits)))
+                                .font(.title3.bold())
+                                .foregroundStyle(.accentFaded)
+                        }
+                        Spacer()
+                    }
+                    .padding(.horizontal, 16 / 2)
+                    .readHeight(into: $monthGridHeaderHeight)
+                    
+                    LazyHGrid(rows: Array(repeating: GridItem(spacing: 8), count: 7), spacing: 8) {
+                        ForEach(0..<month.amountOfPaddingDays, id: \.self) { _ in
+                            placeHolderCell()
+                        }
+                        ForEach(month.monthDaysRange, id: \.self) { dayDate in
+                            CalendarSheetGridCell(
+                                date: dayDate,
+                                hasRecord: records.contains { calendar.isDate($0.timestamp, inSameDayAs: dayDate) },
+                                isToday: calendar.isDate(dayDate, inSameDayAs: .startOfToday),
+                                isDisabled: dayDate > .startOfToday || dayDate < calendar.startOfDay(for: habit.timestamp),
+                                habit: habit
+                            )
+                        }
+                    }
+                    .fixedSize()
+                    .padding(.horizontal, 16 / 2)
+                    .containerRelativeFrame(
+                        .horizontal,
+                        count: month == displayedMonths.last ? 1 : 0,
+                        spacing: .zero,
+                        alignment: .leading,
+                    )
+                }
+                .id(month)
+            }
+        }
+        .padding(.bottom, 16)
+        .padding(.bottom, scrollFixPadding)
     }
 }
