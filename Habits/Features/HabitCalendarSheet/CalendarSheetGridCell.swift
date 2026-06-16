@@ -72,7 +72,7 @@ struct CalendarSheetGridCell: View {
                         .offset(y: indicatorHeight + 0.5)
                         .onChange(of: isBackgroundFilled) { _, willFill in
                             Task {
-                                try? await Task.sleep(for: .seconds(willFill ? 0.3 : 0.15))
+                                try? await Task.sleep(for: .seconds(willFill ? 0.275 : 0.175))
                                 indicatorColor = willFill ? .complementary : .accent
                             }
                         }
@@ -86,32 +86,31 @@ struct CalendarSheetGridCell: View {
                 RoundedRectangle(cornerRadius: 44 * 0.34375)
                     .foregroundStyle(cellFillColor)
                     .scaleEffect(x: scaleX, y: scaleY, anchor: .bottom)
-                    .animation(.smooth, value: isBackgroundFilled)
                     .offset(y: animationOffset)
+                    .padding(.top, isBackgroundFilled ? animationOffset / 2 : 0)
                     .onChange(of: isBackgroundFilled) { _, willFill in
                         Task {
                             withAnimation(isBackgroundFilled ? .spring(.bouncy) : .smooth) {
-                                scaleX = isBackgroundFilled ? 1.0 : 0.0
+                                scaleX = isBackgroundFilled ? 1.0 : 0.001
                                 scaleY = scaleX
                             }
                             if isToday {
                                 withAnimation(.spring) {
-                                    animationOffset = willFill ? -20 : 20
+                                    animationOffset = willFill ? -10 : 24
                                 }
                                 try? await Task.sleep(for: .seconds(0.2))
                                 withAnimation(.spring(duration: 0.3, bounce: willFill ? 0.5 : 0.3)) {
-                                    animationOffset = willFill ? 0 : -4
+                                    animationOffset = willFill ? 0 : -3.5
                                 }
                             }
                         }
                     }
                     .onAppear {
-                        animationOffset = isToday && !hasRecord ? -4 : 0
+                        animationOffset = isToday ? (hasRecord ? 0 : -3.5) : 0
                         scaleX = isBackgroundFilled ? 1.0 : 0.0
                         scaleY = scaleX
                     }
             }
-            .animation(.smooth, value: visualHasRecord)
             .onTapGesture {
                 guard !isDisabled else { return }
                 guard !isAwaitingDelay else { return }
