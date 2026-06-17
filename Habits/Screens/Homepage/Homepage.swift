@@ -35,6 +35,7 @@ struct Homepage: View {
             .toolbarTitleDisplayMode(.inlineLarge)
         }
         .modalPresenter()
+        .ignoresSafeArea(.container)
     }
     
     func newHabitButton() -> some View {

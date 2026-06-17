@@ -86,7 +86,6 @@ struct ModalPresenter: ViewModifier {
                     .transition(.move(edge: .bottom))
                 }
             }
-            .ignoresSafeArea(.container, edges: .bottom)
             .receiveKeyboardPresentationState($isKeyboardPresented)
             .animation(.none, value: manager.currentContent)
             .animation(.smooth(duration: 0.4), value: sheetBottomEdgeCornerRadius)
