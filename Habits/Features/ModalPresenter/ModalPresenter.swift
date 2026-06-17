@@ -72,8 +72,10 @@ struct ModalPresenter: ViewModifier {
                                     .background(
                                         sheetShape
                                             .fill(.sheetBackground)
-                                            .strokeBorder(.sheetStroke, style: .init(lineWidth: 1))
                                     )
+                                    .overlay {
+                                        sheetShape.strokeBorder(.sheetStroke, style: .init(lineWidth: 1))
+                                    }
                             }
                         }
                         .padding([.leading, .trailing, .bottom], sheetPadding)
