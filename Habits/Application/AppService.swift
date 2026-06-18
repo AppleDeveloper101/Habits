@@ -5,9 +5,11 @@
 //  Created by Andrey on 27/04/2026.
 //
 
-import UIKit
+import SwiftUI
 
 final class AppService {
+    
+    @AppStorage("isOnboardingComplete") private var isOnboardingComplete = false
     
     private init() {}
     
@@ -16,5 +18,9 @@ final class AppService {
         
         appearance.titleTextAttributes = [.foregroundColor: UIColor.accent]
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.accent]
+    }
+    
+    static func completeOnboarding() {
+        UserDefaults.standard.set(true, forKey: "isOnboardingComplete")
     }
 }
