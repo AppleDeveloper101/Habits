@@ -28,7 +28,8 @@ struct HabitCalendarSheet: View {
     private var firstDisplayedMonth: Date {
         if let firstRecordDate = records.first?.timestamp {
             let firstRecordMonth = calendar.dateInterval(of: .month, for: firstRecordDate)!.start
-            return min(firstRecordMonth, initiallyPresentedMonth)
+            let habitCreationMonth = calendar.dateInterval(of: .month, for: habit.timestamp)!.start
+            return min(initiallyPresentedMonth, min(firstRecordMonth, habitCreationMonth))
         } else {
             let habitCreationMonth = calendar.dateInterval(of: .month, for: habit.timestamp)!.start
             return min(habitCreationMonth, initiallyPresentedMonth)
