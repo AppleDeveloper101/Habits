@@ -18,7 +18,7 @@ import SwiftUI
     var currentContent: ModalContent = .newHabitSheet
     var presentationID = UUID()
     
-    var modalAnimationTime: Double { isPresented ? 0.5 : 0.6 }
+    let modalAnimationTime: Double = 0.5
     var interactionBlockingTime: Double { modalAnimationTime }
     
     func present(_ modal: ModalContent) {
