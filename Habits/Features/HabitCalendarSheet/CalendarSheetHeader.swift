@@ -26,7 +26,7 @@ struct CalendarSheetHeader: View {
                     .frame(width: 34, height: 34)
                     .saturation(habit.emoji.isEmpty ? 0 : 1)
                     .contrast(habit.emoji.isEmpty ? 1.17 : 1)
-                    .brightness(!habit.emoji.isEmpty && colorScheme == .dark  ? -0.14 : 0)
+                    .brightness(!habit.emoji.isEmpty && colorScheme == .dark  ? -0.11 : 0)
                 Text(habit.title)
                     .font(.title3.bold())
                     .foregroundStyle(.accent)

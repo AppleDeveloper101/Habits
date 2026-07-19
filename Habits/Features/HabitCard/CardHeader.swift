@@ -40,7 +40,7 @@ struct CardHeader: View {
                     .contrast(habit.emoji.isEmpty ? 1.17 : 1)
                     .brightness(
                         colorScheme == .light ? 0
-                        : habit.emoji.isEmpty ? 0 : -0.14
+                        : habit.emoji.isEmpty ? 0 : -0.11
                     )
                 Text(title)
                     .font(.headline)

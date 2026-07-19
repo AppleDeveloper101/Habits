@@ -33,7 +33,7 @@ struct EmojiPicker: View {
         Text(emoji)
             .font(.title2)
             .foregroundStyle(.accent)
-            .brightness(colorScheme == .light ? 0 : -0.14)
+            .brightness(colorScheme == .light ? 0 : -0.11)
         emojiTextField()
     }
     
