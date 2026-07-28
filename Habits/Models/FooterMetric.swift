@@ -16,7 +16,15 @@ struct FooterMetric: Identifiable {
     var imageSystemName: String? = nil
     
     @NonNegative var valueDecimalPlaces: Int = 2
-    var formattedValue: String? { value?.formatted(.number.precision(.fractionLength(0...valueDecimalPlaces))) }
+    
+    var formattedValue: String? {
+        value?.formatted(.number.precision(.fractionLength(0...valueDecimalPlaces)))
+    }
+    
+    var formattedValueWithTitle: String? {
+        let text = [formattedValue, valueTitle].compactMap {$0}.joined(separator: " ")
+        return text.isEmpty ? nil : text
+    }
     
     var valueToImageSpacing: CGFloat = 2.0
 }
