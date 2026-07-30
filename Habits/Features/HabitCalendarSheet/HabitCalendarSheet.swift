@@ -23,8 +23,6 @@ struct HabitCalendarSheet: View {
     
     private let calendar = Calendar.current
     
-    private let scrollFixPadding: CGFloat = 999_999
-    
     private var firstDisplayedMonth: Date {
         if let firstRecordDate = records.first?.timestamp {
             let firstRecordMonth = calendar.dateInterval(of: .month, for: firstRecordDate)!.start
@@ -56,6 +54,15 @@ struct HabitCalendarSheet: View {
         return months
     }
     
+    private var metrics: [FooterMetric] {[
+        FooterMetric(
+            header: "Test",
+            value: 101,
+            valueTitle: "Metric",
+            imageSystemName: "testtube.2"
+        )
+    ]}
+    
     init(habit: Habit, date: Date) {
         self.habit = habit
         self.date = date
@@ -71,36 +78,38 @@ struct HabitCalendarSheet: View {
     }
     
     var body: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: 16) {
             CalendarSheetHeader(habit: habit)
             
-            HStack(alignment: .bottom, spacing: .zero) {
-                weekdaysColumn()
-                    .padding(.bottom, 16)
-                
-                ScrollView(.horizontal) {
-                    scrollViewContent()
-                }
-                .padding(.bottom, -scrollFixPadding)
-                .scrollClipDisabled()
-                .scrollIndicators(.hidden)
-                .scrollPosition(id: $focusedMonth, anchor: .leading)
-                .onAppear { focusedMonth = initiallyPresentedMonth }
-                .mask {
-                    VStack(spacing: .zero) {
-                        Rectangle()
-                            .frame(width: 999_999, height: monthGridHeaderHeight)
-                        Rectangle()
+            VStack(spacing: 8) {
+                HStack(alignment: .bottom, spacing: .zero) {
+                    weekdaysColumn()
+                    
+                    ScrollView(.horizontal) {
+                        scrollViewContent()
                     }
+                    .scrollClipDisabled()
+                    .scrollIndicators(.hidden)
+                    .scrollPosition(id: $focusedMonth, anchor: .leading)
+                    .onAppear { focusedMonth = initiallyPresentedMonth }
+                    .mask {
+                        VStack(spacing: .zero) {
+                            Rectangle()
+                                .frame(width: 999_999, height: monthGridHeaderHeight)
+                            Rectangle()
+                        }
+                    }
+                    .padding(.trailing, -16)
                 }
-                .padding(.trailing, -16)
+                
+                CalendarSheetFooter(metrics)
+                    .padding(.bottom, 16)
             }
         }
         .padding([.leading, .trailing, .top], 16)
     }
     
     @ViewBuilder private func weekdaysColumn() -> some View {
-        
         let symbols = calendar.veryShortWeekdaySymbols
         let systemFirstWeekdayIndex = calendar.firstWeekday - 1
         var weekdays: [String] { Array(symbols[systemFirstWeekdayIndex...]) + Array(symbols[..<systemFirstWeekdayIndex]) }
@@ -170,7 +179,18 @@ struct HabitCalendarSheet: View {
                 .id(month)
             }
         }
-        .padding(.bottom, 16)
-        .padding(.bottom, scrollFixPadding)
     }
+}
+
+#Preview {
+    Color.clear
+        .modalPresenter()
+        .ignoresSafeArea()
+        .contentShape(.rect)
+        .onTapGesture {
+            ModalManager.shared.present(.habitCalendarSheet(.init(emoji: "S", title: "Sample"), .now))
+        }
+        .task {
+            ModalManager.shared.present(.habitCalendarSheet(.init(emoji: "S", title: "Sample"), .now))
+        }
 }
