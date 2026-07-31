@@ -35,9 +35,9 @@ struct CalendarSheetFooter: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
             }
-            HStack(spacing: metric.valueToImageSpacing) {
-                if let valueWithTitle = metric.formattedValueWithTitle {
-                    Text(valueWithTitle) // TODO: Consider adding centering by value title
+            HStack(spacing: metric.metricToImageSpacing) {
+                if let metric = metric.metric {
+                    Text(metric)
                 }
                 if let imageSystemName = metric.imageSystemName {
                     Image(systemName: imageSystemName)
@@ -54,26 +54,23 @@ struct CalendarSheetFooter: View {
     CalendarSheetFooter([
         FooterMetric(
             header: "Counter",
-            value: 147,
-            valueTitle: "Carrots",
+            metric: "147 Carrots",
             imageSystemName: "carrot",
         ),
         FooterMetric(
             header: "Percentage",
-            value: 147/255*100,
+            metric: "\(147/255*100)",
             imageSystemName: "percent",
-            valueDecimalPlaces: 1,
-            valueToImageSpacing: 1.0
+            metricToImageSpacing: 1.0
         ),
         FooterMetric(
             header: "Category",
-            valueTitle: "Flowers",
+            metric: "Flowers",
             imageSystemName: "camera.macro.circle",
-            valueDecimalPlaces: 5,
         ),
         FooterMetric(
             header: "Plain Metric",
-            value: 609
+            metric: ("609")
         )
     ])
     .padding(.horizontal)
