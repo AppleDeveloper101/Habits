@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CalendarSheetFooter: View {
     
-    let metrics: [FooterMetric] // TODO: Check for reactive updates later
+    let metrics: [FooterMetric]
     
     private var metricsEnumerated: Array<(offset: Int, element: FooterMetric)> {
         Array(metrics.enumerated())
@@ -35,7 +35,7 @@ struct CalendarSheetFooter: View {
                     .font(.system(size: 12, weight: .semibold))
                     .foregroundStyle(.labelPrimary)
             }
-            HStack(spacing: metric.metricToImageSpacing) {
+            HStack(alignment: .firstTextBaseline, spacing: metric.metricToImageSpacing) {
                 if let metric = metric.metric {
                     Text(metric)
                 }
@@ -51,6 +51,8 @@ struct CalendarSheetFooter: View {
 }
 
 #Preview {
+    let percentage = (Double(147) / Double(255) * 100).formatted(.number.precision(.fractionLength(0...2)))
+
     CalendarSheetFooter([
         FooterMetric(
             header: "Counter",
@@ -59,7 +61,7 @@ struct CalendarSheetFooter: View {
         ),
         FooterMetric(
             header: "Percentage",
-            metric: "\(147/255*100)",
+            metric: "\(percentage)",
             imageSystemName: "percent",
             metricToImageSpacing: 1.0
         ),
