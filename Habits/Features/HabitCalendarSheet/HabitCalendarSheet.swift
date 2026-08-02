@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-// TODO: Refactor, optimize performance if possible
+// TODO: Refactor, optimize performance
 
 struct HabitCalendarSheet: View {
     
@@ -54,14 +54,37 @@ struct HabitCalendarSheet: View {
         return months
     }
     
-    private var metrics: [FooterMetric] {[
-        FooterMetric(
-            header: "Test",
-            value: 101,
-            valueTitle: "Metric",
-            imageSystemName: "testtube.2"
+    var daysSinceHabitCreation: Int {
+        let components = calendar.dateComponents(
+            [.day],
+            from: calendar.dateInterval(of: .day, for: habit.timestamp)!.start,
+            to: calendar.dateInterval(of: .day, for: .now)!.end
         )
-    ]}
+        return components.day!
+    }
+    
+    var acceptance: Double { Double(records.count) / Double(daysSinceHabitCreation) * 100 }
+    
+    private var metrics: [FooterMetric] {
+        return [
+            FooterMetric(
+                header: "Duration",
+                metric: "^[\(daysSinceHabitCreation) day](inflect:true)",
+                imageSystemName: "calendar",
+            ),
+            FooterMetric(
+                header: "Contribution",
+                metric: "^[\(records.count) Check-In](inflect:true)",
+                imageSystemName: "square.grid.2x2.fill",
+            ),
+            FooterMetric(
+                header: "Acceptance",
+                metric: "\(acceptance.formatted(.number.precision(.fractionLength(0...1))))",
+                imageSystemName: "percent",
+                metricToImageSpacing: 0.0
+            )
+        ]
+    }
     
     init(habit: Habit, date: Date) {
         self.habit = habit
@@ -81,7 +104,7 @@ struct HabitCalendarSheet: View {
         VStack(spacing: 16) {
             CalendarSheetHeader(habit: habit)
             
-            VStack(spacing: 8) {
+            VStack(spacing: 12) {
                 HStack(alignment: .bottom, spacing: .zero) {
                     weekdaysColumn()
                     
@@ -103,10 +126,12 @@ struct HabitCalendarSheet: View {
                 }
                 
                 CalendarSheetFooter(metrics)
+                    .padding(.leading, 16)
                     .padding(.bottom, 16)
             }
         }
         .padding([.leading, .trailing, .top], 16)
+        .persistentSystemOverlays(.hidden)
     }
     
     @ViewBuilder private func weekdaysColumn() -> some View {
