@@ -12,7 +12,13 @@ struct Mark: View {
         GeometryReader { proxy in
             let cornerRadius = min(proxy.size.width, proxy.size.height) * markCornerRadiusCoefficient
             RoundedRectangle(cornerRadius: cornerRadius)
-                .foregroundStyle(.accent)
+                .fill(
+                    LinearGradient(
+                        colors: [.weekRowCellStart, .weekRowCellEnd],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
         }
         .aspectRatio(1, contentMode: .fit)
     }
