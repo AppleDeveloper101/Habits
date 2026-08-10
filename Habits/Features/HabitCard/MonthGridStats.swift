@@ -20,7 +20,7 @@ struct MonthGridStats: View {
         return MonthGridModel(date: date)
     }
     
-    var cellWidth: CGFloat {
+    var columnWidth: CGFloat {
         let totalColumnsCount = gridModels.reduce(0) { $0 + $1.columnCount }
         let gridGaps = gridModels.count - 1
         let cellGaps = totalColumnsCount - gridModels.count
@@ -43,9 +43,17 @@ struct MonthGridStats: View {
             ForEach(0..<model.columnCount, id: \.self) { column in
                 VStack(spacing: cellSpacing) {
                     ForEach(0..<7) { row in
-                        //
+                        let cellNumber = (column * 7 + row + 1)
+                        let dateIndex = 0 - model.paddingCellsCount + cellNumber - 1
+                        
+                        if model.dates.indices.contains(dateIndex) {
+                            Mark()
+                        } else {
+                            Color.clear.aspectRatio(1.0, contentMode: .fit)
+                        }
                     }
                 }
+                .frame(width: columnWidth)
             }
         }
     }
@@ -57,7 +65,8 @@ struct MonthGridModel: Identifiable {
     let id: UUID
     let date: Date
     let dates: [Date]
-    var columnCount: Int
+    let columnCount: Int
+    let paddingCellsCount: Int
     
     init(date: Date = .now) {
         self.id = UUID()
@@ -67,6 +76,12 @@ struct MonthGridModel: Identifiable {
             return range.map { offset in Calendar.current.date(byAdding: .day, value: offset - 1, to: date)! }
         }()
         self.columnCount = Calendar.current.range(of: .weekOfYear, in: .month, for: date)!.count
+        self.paddingCellsCount = {
+            let currentMonth = Calendar.current.dateComponents([.calendar, .year, .month], from: date).date!
+            let firstWeekday = Calendar.current.firstWeekday
+            let monthWeekday = Calendar.current.component(.weekday, from: currentMonth)
+            return (monthWeekday - firstWeekday + 7) % 7
+        }()
     }
     
 }
@@ -80,14 +95,4 @@ struct MonthGridModel: Identifiable {
     .padding(12)
     .background(DefaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
     .padding()
-}
-
-import Playgrounds
-
-#Playground {
-    let currentMonth = Calendar.current.dateComponents([.calendar, .year, .month], from: .now).date!
-    let firstWeekday = Calendar.current.firstWeekday
-    let monthWeekday = Calendar.current.component(.weekday, from: currentMonth)
-    
-    _ = (monthWeekday - firstWeekday + 7) % 7
 }
