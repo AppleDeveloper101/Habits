@@ -31,11 +31,22 @@ struct MonthGridStats: View {
     var body: some View {
         HStack(spacing: gridSpacing) {
             ForEach(gridModels) { model in
-                grid(model: model)
+                VStack(alignment: .leading, spacing: 4.0) {
+                    header(date: model.date)
+                    grid(model: model)
+                }
             }
         }
         .frame(maxWidth: .infinity)
         .readWidth(into: $width)
+    }
+    
+    @ViewBuilder private func header(date: Date) -> some View {
+        Text(date.formatted(.dateTime.month(.wide)))
+            .foregroundStyle(.accent)
+            .font(.system(size: 14))
+            .fontWeight(.semibold)
+            .lineLimit(1)
     }
     
     @ViewBuilder private func grid(model: MonthGridModel) -> some View {
