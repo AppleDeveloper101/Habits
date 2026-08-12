@@ -64,7 +64,7 @@ struct MonthGridStats: View {
                         }
                     }
                 }
-                .frame(width: columnWidth)
+                .frame(width: columnWidth) // FIXME: Runtime freeze upon creation, fixed by applying to cells directly
             }
         }
     }
@@ -98,12 +98,14 @@ struct MonthGridModel: Identifiable {
 }
 
 #Preview {
-    VStack(spacing: 8) {
-        CardHeader(.init(emoji: "🌁", title: "Preview Habit"))
-        MonthGridStats()
+    ScrollView {
+        VStack(spacing: 8) {
+            CardHeader(.init(emoji: "🌁", title: "Preview Habit"))
+            MonthGridStats()
+        }
+        .border(.pink, width: 1/6)
+        .padding(12)
+        .background(DefaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
+        .padding()
     }
-    .border(.pink, width: 1/6)
-    .padding(12)
-    .background(DefaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
-    .padding()
 }
