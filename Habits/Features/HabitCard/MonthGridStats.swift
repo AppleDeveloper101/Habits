@@ -10,7 +10,10 @@ import SwiftUI
 struct MonthGridStats: View {
     
     @State private var width: CGFloat = 0.0
+    @State private var gridHeight: CGFloat = 0.0
     
+    let weekdaysToGridsSpacing: CGFloat = 4.0
+    let monthHeaderToGridSpacing: CGFloat = 4.0
     let gridSpacing: CGFloat = 8.0
     let cellSpacing: CGFloat = 2.0
     
@@ -29,16 +32,39 @@ struct MonthGridStats: View {
     }
     
     var body: some View {
-        HStack(spacing: gridSpacing) {
-            ForEach(gridModels) { model in
-                VStack(alignment: .leading, spacing: 4.0) {
-                    header(date: model.date)
-                    grid(model: model)
+        HStack(alignment: .bottom, spacing: weekdaysToGridsSpacing) {
+            weekdaysColumn()
+                .frame(height: gridHeight)
+            HStack(spacing: gridSpacing) {
+                ForEach(gridModels) { model in
+                    VStack(alignment: .leading, spacing: monthHeaderToGridSpacing) {
+                        header(date: model.date)
+                        grid(model: model)
+                            .readHeight(into: $gridHeight)
+                    }
                 }
             }
+            .frame(maxWidth: .infinity)
+            .readWidth(into: $width)
         }
-        .frame(maxWidth: .infinity)
-        .readWidth(into: $width)
+    }
+    
+    @ViewBuilder private func weekdaysColumn() -> some View {
+        HStack(spacing: 1.0) {
+            VStack(spacing: cellSpacing) {
+                ForEach(0..<7) { index in
+                    Text(["S", "M", "T", "W", "T", "F", "S"][index])
+                        .foregroundStyle(.accent)
+                        .font(.system(size: 9))
+                        .fontWeight(.semibold)
+                        .frame(height: columnWidth)
+                }
+            }
+            .frame(width: 16.0)
+            Capsule()
+                .fill(.monthGridStatsWeekdaysColumnSeparator)
+                .frame(width: 1.0)
+        }
     }
     
     @ViewBuilder private func header(date: Date) -> some View {
