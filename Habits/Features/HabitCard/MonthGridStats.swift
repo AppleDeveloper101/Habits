@@ -50,10 +50,15 @@ struct MonthGridStats: View {
     }
     
     @ViewBuilder private func weekdaysColumn() -> some View {
+        
+        let firstWeekday = Calendar.current.firstWeekday - 1
+        let shortSymbols = Calendar.current.veryShortWeekdaySymbols
+        let symbols = shortSymbols[firstWeekday...] + shortSymbols[..<firstWeekday]
+        
         HStack(spacing: 1.0) {
             VStack(spacing: cellSpacing) {
-                ForEach(0..<7) { index in
-                    Text(["S", "M", "T", "W", "T", "F", "S"][index])
+                ForEach(symbols, id: \.self) { symbol in
+                    Text(symbol)
                         .foregroundStyle(.accent)
                         .font(.system(size: 9))
                         .fontWeight(.semibold)
