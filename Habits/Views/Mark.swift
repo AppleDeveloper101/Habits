@@ -9,40 +9,51 @@ import SwiftUI
 
 struct Mark: View {
     
-    let hasRecord: Bool
-    let isToday: Bool
+    let state: State
+    let scale: CGFloat
+    let colors: [Color]
     
-    var scaleFactor: CGFloat { hasRecord ? 1.0 : isToday ? 0.5 : 0.25 }
-    
-    init(hasRecord: Bool = false, isToday: Bool = false) {
-        self.hasRecord = hasRecord
-        self.isToday = isToday
+    init(state: State = .unchecked) {
+        self.state = state
+        
+        self.scale = switch state {
+        case .placeholder: 0.0
+        case .unchecked: 0.25
+        case .today: 0.5
+        case .checked: 1.0
+        }
+        
+        self.colors = switch state {
+        case .placeholder: [.clear]
+        case .unchecked: [.weekRowEmptyCell]
+        case .today, .checked: [.weekRowCellStart, .weekRowCellEnd]
+        }
     }
     
     var body: some View {
         GeometryReader { proxy in
-            let cornerRadius = min(proxy.size.width, proxy.size.height) * markCornerRadiusCoefficient
+            let cornerRadius = proxy.size.width * (state == .checked ? markCornerRadiusCoefficient : 0.5)
             RoundedRectangle(cornerRadius: cornerRadius)
-                .fill(
-                    LinearGradient(
-                        colors: hasRecord || isToday ? [.weekRowCellStart, .weekRowCellEnd] : [.weekRowEmptyCell],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-                .frame(width: proxy.size.width * scaleFactor, height: proxy.size.height * scaleFactor)
-                .position(x: proxy.size.width / 2.0, y: proxy.size.height / 2.0)
+                .fill(Gradient(colors: colors))
+                .scaleEffect(scale)
         }
-        .aspectRatio(1, contentMode: .fit)
+        .aspectRatio(1.0, contentMode: .fit)
     }
-    
+}
+
+extension Mark {
+    enum State: CaseIterable {
+        case placeholder
+        case unchecked
+        case today
+        case checked
+    }
 }
 
 #Preview {
-    VStackLayout(spacing: 2) {
-        Mark(hasRecord: false)
-        Mark(hasRecord: true)
-        Mark(hasRecord: false, isToday: true)
+    VStack(spacing: 32.0) {
+        ForEach(Mark.State.allCases, id: \.self) { state in
+            Mark(state: state)
+        }
     }
-    .frame(height: 128)
 }
