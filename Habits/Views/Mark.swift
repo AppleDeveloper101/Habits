@@ -12,6 +12,7 @@ struct Mark: View {
     let state: State
     let scale: CGFloat
     let colors: [Color]
+    let cornerRadiusCoefficient: CGFloat
     
     init(state: State = .unchecked) {
         self.state = state
@@ -28,12 +29,16 @@ struct Mark: View {
         case .unchecked: [.weekRowEmptyCell]
         case .today, .checked: [.weekRowCellStart, .weekRowCellEnd]
         }
+        
+        self.cornerRadiusCoefficient = switch state {
+        case .checked: markCornerRadiusCoefficient
+        default: 0.5
+        }
     }
     
     var body: some View {
         GeometryReader { proxy in
-            let cornerRadius = proxy.size.width * (state == .checked ? markCornerRadiusCoefficient : 0.5)
-            RoundedRectangle(cornerRadius: cornerRadius)
+            RoundedRectangle(cornerRadius: proxy.size.width * cornerRadiusCoefficient)
                 .fill(Gradient(colors: colors))
                 .scaleEffect(scale)
         }
