@@ -39,7 +39,7 @@ struct Mark: View {
     var body: some View {
         GeometryReader { proxy in
             RoundedRectangle(cornerRadius: proxy.size.width * cornerRadiusCoefficient)
-                .fill(Gradient(colors: colors))
+                .fill(colors.gradient)
                 .scaleEffect(scale)
         }
         .aspectRatio(1.0, contentMode: .fit)
