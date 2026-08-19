@@ -7,10 +7,15 @@
 
 import SwiftUI
 
+// TODO: Add reactive UI updates on check-in
+// TODO: Conduct architectural changes
+
 struct MonthGridStats: View {
     
     @State private var width: CGFloat = 0.0
     @State private var gridHeight: CGFloat = 0.0
+    
+    let habit: Habit
     
     let weekdaysToGridsSpacing: CGFloat = 4.0
     let monthHeaderToGridSpacing: CGFloat = 4.0
@@ -21,6 +26,19 @@ struct MonthGridStats: View {
         let currentMonth = Calendar.current.dateComponents([.calendar, .year, .month], from: .now).date!
         let date = Calendar.current.date(byAdding: .month, value: offset, to: currentMonth)!
         return MonthGridModel(date: date)
+    }
+    
+    // MARK: Consider using @Query for records fetching to achieve synchronization of UI state
+    var datesWithRecords: Set<Date> {
+        let gridDates = gridModels.reduce([]) { accumulator, model in
+            accumulator + model.dates
+        }
+        let recordDates = habit.records.map { record in
+            Calendar.current.dateComponents([.calendar, .day, .month, .year], from: record.timestamp).date!
+        }
+        let allDates: Set<Date> = Set(gridDates)
+        let allRecordDates: Set<Date> = Set(recordDates)
+        return allDates.intersection(allRecordDates)
     }
     
     var columnWidth: CGFloat {
@@ -41,6 +59,9 @@ struct MonthGridStats: View {
                         header(date: model.date)
                         grid(model: model)
                             .readHeight(into: $gridHeight)
+                    }
+                    .onTapGesture {
+                        ModalManager.shared.present(.habitCalendarSheet(habit, model.date))
                     }
                 }
             }
@@ -89,9 +110,15 @@ struct MonthGridStats: View {
                         let dateIndex = 0 - model.paddingCellsCount + cellNumber - 1
                         
                         if model.dates.indices.contains(dateIndex) {
-                            Mark()
+                            if datesWithRecords.contains(model.dates[dateIndex]) {
+                                Mark(state: .checked)
+                            } else if model.dates[dateIndex].isToday {
+                                Mark(state: .today)
+                            } else {
+                                Mark()
+                            }
                         } else {
-                            Color.clear.aspectRatio(1.0, contentMode: .fit)
+                            Mark(state: .placeholder)
                         }
                     }
                 }
@@ -129,10 +156,12 @@ struct MonthGridModel: Identifiable {
 }
 
 #Preview {
+    let habit = Habit(emoji: "🌁", title: "Preview Habit")
+    
     ScrollView {
         VStack(spacing: 8) {
-            CardHeader(.init(emoji: "🌁", title: "Preview Habit"))
-            MonthGridStats()
+            CardHeader(habit)
+            MonthGridStats(habit: habit)
         }
         .border(.pink, width: 1/6)
         .padding(12)
