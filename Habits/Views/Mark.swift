@@ -44,10 +44,11 @@ struct Mark: View {
         }
         .aspectRatio(1.0, contentMode: .fit)
     }
+    
 }
 
 extension Mark {
-    enum State: CaseIterable {
+    enum State {
         case placeholder
         case unchecked
         case today
@@ -57,8 +58,9 @@ extension Mark {
 
 #Preview {
     VStack(spacing: 32.0) {
-        ForEach(Mark.State.allCases, id: \.self) { state in
-            Mark(state: state)
-        }
+        Mark(state: .placeholder)
+        Mark(state: .unchecked)
+        Mark(state: .today)
+        Mark(state: .checked)
     }
 }
