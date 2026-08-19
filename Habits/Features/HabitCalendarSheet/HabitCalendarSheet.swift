@@ -127,10 +127,9 @@ struct HabitCalendarSheet: View {
                 
                 CalendarSheetFooter(metrics)
                     .padding(.leading, 16)
-                    .padding(.bottom, 16)
             }
         }
-        .padding([.leading, .trailing, .top], 16)
+        .padding(16.0)
         .persistentSystemOverlays(.hidden)
     }
     
@@ -186,7 +185,7 @@ struct HabitCalendarSheet: View {
                             CalendarSheetGridCell(
                                 date: dayDate,
                                 hasRecord: records.contains { calendar.isDate($0.timestamp, inSameDayAs: dayDate) },
-                                isToday: calendar.isDate(dayDate, inSameDayAs: .startOfToday),
+                                isToday: dayDate.isToday,
                                 isDisabled: dayDate > .startOfToday || dayDate < calendar.startOfDay(for: habit.timestamp),
                                 habit: habit
                             )

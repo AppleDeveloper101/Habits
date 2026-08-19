@@ -8,8 +8,13 @@
 import Foundation
 
 extension Date {
+    
     static var startOfToday: Date {
         Calendar.current.startOfDay(for: .now)
+    }
+    
+    var isToday: Bool {
+        Calendar.current.isDateInToday(self)
     }
     
     var amountOfPaddingDays: Int {
@@ -32,4 +37,5 @@ extension Date {
         
         return dates
     }
+    
 }

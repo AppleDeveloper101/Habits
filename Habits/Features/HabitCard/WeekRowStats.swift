@@ -51,7 +51,7 @@ struct WeekRowStats: View {
                 WeekRowCell(
                     date: date,
                     hasRecord: records.contains { calendar.isDate($0.timestamp, equalTo: date, toGranularity: .day) },
-                    isToday: calendar.isDate(date, equalTo: .now, toGranularity: .day),
+                    isToday: date.isToday,
                     symbol: date.formatted(.dateTime.weekday(.narrow))
                 )
                 if index == 2 { separatorColumn() }
