@@ -6,11 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
-// TODO: Add reactive UI updates on check-in
 // TODO: Conduct architectural changes
 
 struct MonthGridStats: View {
+    
+    @Query private var records: [Record]
     
     @State private var width: CGFloat = 0.0
     @State private var gridHeight: CGFloat = 0.0
@@ -28,12 +30,11 @@ struct MonthGridStats: View {
         return MonthGridModel(date: date)
     }
     
-    // MARK: Consider using @Query for records fetching to achieve synchronization of UI state
     var datesWithRecords: Set<Date> {
         let gridDates = gridModels.reduce([]) { accumulator, model in
             accumulator + model.dates
         }
-        let recordDates = habit.records.map { record in
+        let recordDates = records.map { record in
             Calendar.current.dateComponents([.calendar, .day, .month, .year], from: record.timestamp).date!
         }
         let allDates: Set<Date> = Set(gridDates)
@@ -47,6 +48,17 @@ struct MonthGridStats: View {
         let cellGaps = totalColumnsCount - gridModels.count
         let leanWidth = width - CGFloat(cellGaps) * cellSpacing - CGFloat(gridGaps) * gridSpacing
         return leanWidth / CGFloat(totalColumnsCount)
+    }
+    
+    init(habit: Habit) {
+        self.habit = habit
+        
+        let fetchedRecordsHabitID = habit.id
+        let predicate = #Predicate<Record> {
+            $0.habit?.id == fetchedRecordsHabitID
+        }
+        
+        _records = Query(filter: predicate)
     }
     
     var body: some View {
@@ -163,7 +175,6 @@ struct MonthGridModel: Identifiable {
             CardHeader(habit)
             MonthGridStats(habit: habit)
         }
-        .border(.pink, width: 1/6)
         .padding(12)
         .background(DefaultStyleShape(RoundedRectangle(cornerRadius: 24), isElevated: true))
         .padding()
