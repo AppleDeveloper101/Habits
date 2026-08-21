@@ -24,7 +24,7 @@ struct MonthGridStats: View {
     let gridSpacing: CGFloat = 8.0
     let cellSpacing: CGFloat = 2.0
     
-    var gridModels = (0..<3).map { offset in
+    var gridModels = (-2...0).map { offset in
         let currentMonth = Calendar.current.dateComponents([.calendar, .year, .month], from: .now).date!
         let date = Calendar.current.date(byAdding: .month, value: offset, to: currentMonth)!
         return MonthGridModel(date: date)
@@ -72,6 +72,7 @@ struct MonthGridStats: View {
                         grid(model: model)
                             .readHeight(into: $gridHeight)
                     }
+                    .contentShape(.rect)
                     .onTapGesture {
                         ModalManager.shared.present(.habitCalendarSheet(habit, model.date))
                     }
