@@ -20,7 +20,6 @@ struct Homepage: View {
                         ForEach(habits) {
                             HabitCard($0)
                                 .padding([.leading, .trailing], 16)
-                                .transition(.asymmetric(insertion: .identity, removal: .move(edge: .trailing)))
                         }
                     }
                     .padding([.top, .bottom], 16)
@@ -30,7 +29,6 @@ struct Homepage: View {
             .scrollIndicators(.hidden)
             .background(Color.background)
             .toolbar(content: newHabitButton)
-            .animation(.snappy, value: habits)
             .ignoresSafeArea(.all, edges: .bottom)
             .toolbarTitleDisplayMode(.inlineLarge)
         }

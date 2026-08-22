@@ -135,7 +135,7 @@ struct MonthGridStats: View {
                         }
                     }
                 }
-                .frame(width: columnWidth) // FIXME: Runtime freeze upon creation, fixed by applying to cells directly
+                .frame(width: columnWidth)
             }
         }
     }
