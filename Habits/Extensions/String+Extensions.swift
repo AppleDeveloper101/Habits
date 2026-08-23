@@ -7,11 +7,10 @@
 
 extension String {
     
-    var isDefaultEmoji: Bool {
+    static let defaultHabitEmoji = "🎯"
+    
+    var isDefaultHabitEmoji: Bool {
         self == "🎯"
     }
     
-    static var defaultEmoji: Self {
-        "🎯"
-    }
 }
