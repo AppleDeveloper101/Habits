@@ -26,7 +26,7 @@ struct CardHeader: View {
         self.habit = habit
         self.title = habit.title
         self.emoji = habit.emoji
-        self._saturation = State(initialValue: emoji.isEmpty ? 0.0 : 1.0)
+        _saturation = State(initialValue: emoji.isEmpty ? 0.0 : 1.0)
     }
     
     var body: some View {
@@ -62,7 +62,7 @@ struct CardHeader: View {
                         withAnimation { title = newTitle }
                     }
                     
-                    if newEmoji.isDefaultEmoji && oldEmoji.isEmpty || newEmoji.isEmpty && oldEmoji.isDefaultEmoji {
+                    if newEmoji.isDefaultHabitEmoji && oldEmoji.isEmpty || newEmoji.isEmpty && oldEmoji.isDefaultHabitEmoji {
                         try? await Task.sleep(for: .seconds(0.5))
                         withAnimation(.smooth(duration: 0.8)) {
                             saturation = newEmoji.isEmpty ? 0.0 : 1.0
