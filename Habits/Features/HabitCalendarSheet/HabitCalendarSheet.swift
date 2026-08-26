@@ -175,7 +175,7 @@ struct HabitCalendarSheet: View {
                         Spacer()
                     }
                     .padding(.horizontal, 16 / 2)
-                    .readHeight(into: $monthGridHeaderHeight)
+                    .readSize(.vertical, into: $monthGridHeaderHeight)
                     
                     LazyHGrid(rows: Array(repeating: GridItem(spacing: 8), count: 7), spacing: 8) {
                         ForEach(0..<month.amountOfPaddingDays, id: \.self) { _ in

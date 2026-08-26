@@ -77,7 +77,7 @@ struct ConfirmationButton: View {
                 Capsule()
                     .foregroundStyle(.deleteButtonLabel)
                     .frame(width: proxy.size.width * CGFloat(progress) / 3)
-                    .readWidth(into: $fillingCapsuleWidth)
+                    .readSize(.horizontal, into: $fillingCapsuleWidth)
                     .frame(maxWidth: .infinity)
             }
         }

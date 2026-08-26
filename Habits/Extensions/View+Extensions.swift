@@ -18,19 +18,11 @@ extension View {
         transform(self)
     }
     
-    func readHeight(into property: Binding<CGFloat>) -> some View {
-        self.onGeometryChange(for: CGFloat.self) { proxy in
-            proxy.size.height
-        } action: { height in
-            property.wrappedValue = height
-        }
-    }
-    
-    func readWidth(into property: Binding<CGFloat>) -> some View {
-        self.onGeometryChange(for: CGFloat.self) { proxy in
-            proxy.size.width
-        } action: { width in
-            property.wrappedValue = width
+    func readSize(_ dimension: Axis.Set, into property: Binding<CGFloat>) -> some View {
+        self.onGeometryChange(for: CGFloat.self) { geometry in
+            dimension == .horizontal ? geometry.size.width : geometry.size.height
+        } action: { size in
+            property.wrappedValue = size
         }
     }
     
@@ -49,4 +41,5 @@ extension View {
             state.wrappedValue = output
         }
     }
+    
 }

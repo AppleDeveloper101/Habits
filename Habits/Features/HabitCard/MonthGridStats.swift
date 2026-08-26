@@ -290,7 +290,7 @@ struct MonthGridStats: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .readWidth(into: $gridsContainerWidth)
+            .readSize(.horizontal, into: $gridsContainerWidth)
             .border(.green.opacity(1/2))
         }
     }

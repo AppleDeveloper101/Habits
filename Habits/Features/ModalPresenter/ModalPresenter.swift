@@ -62,7 +62,7 @@ struct ModalPresenter: ViewModifier {
                         .clipShape(sheetShape)
                         .id(manager.presentationID)
                         .frame(maxWidth: .infinity)
-                        .readHeight(into: $sheetContentHeight)
+                        .readSize(.vertical, into: $sheetContentHeight)
                         .frame(height: sheetContentHeight, alignment: .top)
                         .modify { view in
                             if #available(iOS 26.0, *) {
