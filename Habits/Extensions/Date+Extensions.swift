@@ -38,4 +38,12 @@ extension Date {
         return dates
     }
     
+    func leavingComponents(_ components: Set<Calendar.Component>) -> Date {
+        Calendar.current.dateComponents(components, from: self).date!
+    }
+    
+    func monthName(_ style: FormatStyle.Symbol.Month = .wide) -> String {
+        self.formatted(.dateTime.month(style))
+    }
+    
 }
