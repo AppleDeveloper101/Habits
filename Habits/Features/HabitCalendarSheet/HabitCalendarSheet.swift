@@ -101,35 +101,33 @@ struct HabitCalendarSheet: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: .zero) {
             CalendarSheetHeader(habit: habit)
+                .padding(16.0)
             
-            VStack(spacing: 12) {
-                HStack(alignment: .bottom, spacing: .zero) {
-                    weekdaysColumn()
-                    
-                    ScrollView(.horizontal) {
-                        scrollViewContent()
-                    }
-                    .scrollClipDisabled()
-                    .scrollIndicators(.hidden)
-                    .scrollPosition(id: $focusedMonth, anchor: .leading)
-                    .onAppear { focusedMonth = initiallyPresentedMonth }
-                    .mask {
-                        VStack(spacing: .zero) {
-                            Rectangle()
-                                .frame(width: 999_999, height: monthGridHeaderHeight)
-                            Rectangle()
-                        }
-                    }
-                    .padding(.trailing, -16)
-                }
+            HStack(alignment: .bottom, spacing: .zero) {
+                weekdaysColumn()
                 
-                CalendarSheetFooter(metrics)
-                    .padding(.leading, 16)
+                ScrollView(.horizontal) {
+                    scrollViewContent()
+                }
+                .scrollClipDisabled()
+                .scrollIndicators(.hidden)
+                .scrollPosition(id: $focusedMonth, anchor: .leading)
+                .onAppear { focusedMonth = initiallyPresentedMonth }
+                .mask {
+                    VStack(spacing: .zero) {
+                        Rectangle()
+                            .frame(width: 999_999, height: monthGridHeaderHeight)
+                        Rectangle()
+                    }
+                }
             }
+            .padding(.leading, 16)
+            
+            CalendarSheetFooter(metrics)
+                .padding(.init(top: 12.0, leading: 32.0, bottom: 16.0, trailing: 16.0))
         }
-        .padding(16.0)
         .persistentSystemOverlays(.hidden)
     }
     
