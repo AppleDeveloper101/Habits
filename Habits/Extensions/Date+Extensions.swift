@@ -39,6 +39,14 @@ extension Date {
         return dates
     }
     
+    func count(of component: Calendar.Component, in containingComponent: Calendar.Component) -> Int {
+        Calendar.current.range(of: component, in: containingComponent, for: self)!.count
+    }
+    
+    func interval(of component: Calendar.Component) -> DateInterval {
+        Calendar.current.dateInterval(of: component, for: self)!
+    }
+    
     func leavingComponents(_ components: Set<Calendar.Component>) -> Date {
         Calendar.current.dateComponents(components, from: self).date!
     }
