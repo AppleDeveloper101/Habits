@@ -14,15 +14,15 @@ struct MonthGrid: View {
     
     private let model: MonthGridViewModel
     
-    init(date: Date, habit: Habit) {
+    init(month date: Date, habit: Habit) {
         self.model = MonthGridViewModel(date: date)
         
-        let fetchedRecordsHabitID = habit.id
-        let fetchInterval = Calendar.current.dateInterval(of: .month, for: date)!
+        let habitID = habit.id
+        let timeInterval = model.monthDate.interval(of: .month)
         let predicate = #Predicate<Record> { record in
-            record.timestamp >= fetchInterval.start
-            && record.timestamp <= fetchInterval.end
-            && record.habit?.id == fetchedRecordsHabitID
+            record.habit?.id == habitID
+            && record.timestamp >= timeInterval.start
+            && record.timestamp < timeInterval.end
         }
         
         self._records = Query(filter: predicate)
@@ -45,7 +45,7 @@ struct MonthGrid: View {
                             let date = Calendar.current.date(
                                 byAdding: .day,
                                 value: index - model.paddingCellsCount,
-                                to: model.normalizedDate
+                                to: model.monthDate
                             )!
                             
                             if !model.validIndexRange.contains(index) {
@@ -67,30 +67,20 @@ struct MonthGrid: View {
 
 struct MonthGridViewModel {
     
-    let normalizedDate: Date
+    let monthDate: Date
+    let daysCount: Int
+    let columnsCount: Int
     let paddingCellsCount: Int
-    let monthDaysCount: Int
     let validIndexRange: Range<Int>
     let monthName: String
-    let columnsCount: Int
     
     init(date: Date) {
-        self.normalizedDate = date.leavingComponents([.calendar, .year, .month])
-        
-        self.paddingCellsCount = normalizedDate.amountOfPaddingDays
-        self.monthDaysCount = Calendar.current.range(
-            of: .day,
-            in: .month,
-            for: normalizedDate
-        )!.count
-        
-        self.validIndexRange = paddingCellsCount..<monthDaysCount+paddingCellsCount
+        self.monthDate = date.leavingComponents([.calendar, .year, .month])
+        self.daysCount = monthDate.count(of: .day, in: .month)
+        self.columnsCount = monthDate.count(of: .weekOfMonth, in: .month)
+        self.paddingCellsCount = monthDate.amountOfPaddingDays
+        self.validIndexRange = paddingCellsCount..<daysCount+paddingCellsCount
         self.monthName = date.monthName(.wide)
-        self.columnsCount = Calendar.current.range(
-            of: .weekOfMonth,
-            in: .month,
-            for: normalizedDate
-        )!.count
     }
 }
 
@@ -103,14 +93,13 @@ struct MonthGridViewModel {
     }
     
     var stepperText: String {
-        "Month \(date.formatted(.dateTime.year()))"
+        "\(date.formatted(.dateTime.month(.wide))) \(date.formatted(.dateTime.year()))"
     }
     
     VStack(spacing: 32.0) {
-        MonthGrid(date: date, habit: habit)
-            .frame(height: 320.0)
+        MonthGrid(month: date, habit: habit)
+            .frame(height: 192.0)
         Stepper(stepperText, value: $offset)
-            .frame(width: 224.0)
+            .frame(width: 240.0)
     }
-    .padding()
 }
