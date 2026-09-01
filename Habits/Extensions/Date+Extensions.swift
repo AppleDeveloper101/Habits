@@ -18,8 +18,9 @@ extension Date {
     }
     
     var amountOfPaddingDays: Int {
+        let monthDate = self.leavingComponents([.calendar, .month, .year])
         let systemFirstWeekday = Calendar.current.firstWeekday
-        let firstWeekdayOfMonth = Calendar.current.component(.weekday, from: self)
+        let firstWeekdayOfMonth = Calendar.current.component(.weekday, from: monthDate)
         return (firstWeekdayOfMonth - systemFirstWeekday + 7) % 7
     }
     
